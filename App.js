@@ -1,8 +1,8 @@
 import React from 'react';
 import { Router, Scene } from 'react-native-router-flux';
 
-import LoginPage from './pages/LoginPage';
-import SessionsPage from './pages/SessionsPage';
+import LoginPage from './Pages/LoginPage';
+import SessionsPage from './Pages/SessionsPage';
 
 export default class App extends React.Component {
   render() {

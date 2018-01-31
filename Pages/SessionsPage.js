@@ -1,19 +1,7 @@
 import React from 'react';
 import { FlatList, StyleSheet, View, Text } from 'react-native';
 
-import Datastore from 'react-native-local-mongodb';
-
-const db = new Datastore({
-  inMemoryOnly: true
-});
-
-for( let i = 0; i < 50; i++ ) {
-  db.insert({
-    id: i + 1,
-    name: 'Sesion ' + i,
-    date: new Date()
-  });
-}
+import LocalMongoDB from '../Database/LocalMongoDB';
 
 export default class SessionsPage extends React.Component {
     constructor( props ) {
@@ -23,26 +11,27 @@ export default class SessionsPage extends React.Component {
             sessions: []
         }
 
-        this.getSessions();
+        this.DB = new LocalMongoDB( undefined, true, false );
+        for( let i = 0; i < 50; i++ ) {
+            this.DB.insert({
+                id: i,
+                name: 'Sesion ' + (i+1)
+            }).then( ( session ) => this.addSession( session ) );
+        }
     }
 
-    getSessions() {
-        db.find( {}, ( err, docs ) => {
-            if( err ) {
-                return;
-            }
-
-            this.setState({sessions: docs});
-        });
+    addSession( session ) {
+        this.setState({ sessions: [...this.state.sessions, session ] })
     }
-
+    
     render() {
         return(
             <FlatList
                 data={this.state.sessions}
                 keyExtractor={ ( session, index ) => session.id }
                 renderItem={
-                    ( session ) => {
+                    ( item ) => {
+                        const session = item.item;
                         return(
                             <View style={styles.container}>
                                 <Text>{session.name}</Text>
