@@ -3,7 +3,7 @@ const DEFAULT_TIME = 100;
 
 export default class Task {
     /*
-        @frequency - Time (in ms) between Task's exectuions
+        @frequency - Time (in ms) between Task's executions
     */
     constructor( frequency ) {
         this.state = 'waiting';

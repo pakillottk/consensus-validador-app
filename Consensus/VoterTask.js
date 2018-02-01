@@ -1,5 +1,4 @@
 import Task from '../Tasks/Task';
-import Code from '../Database/Models/Code/Code';
 
 const LOOP_FREQ = 100; //ms
 
@@ -7,12 +6,25 @@ export default class VoterTask extends Task {
     constructor( votationsPool, freq ) {
         super( freq || LOOP_FREQ );
         
-        this.votationsPool = votationsPool || null;
+        this.votationsPool      = votationsPool || null;
+        this.controllerAttached = null;
+    }
+
+    attachController( controller ) {
+        this.controllerAttached = controller;
     }
 
     emitVote( votation ) {
-        const verifyResult = votation.code.verify( votation.scanMode );
-        votation.vote( verifyResult.verification );
+        //code not in localDB, vote blank
+        if( votation.code === null ) {
+            votation.vote( 'blank' );
+        } else {
+            const verifyResult = votation.code.verify( votation.scanMode );
+            votation.vote( verifyResult.verification );
+            if( this.controllerAttached !== null ) {
+                this.controllerAttached.voteSent( votation.code, verifyResult.verification );
+            }
+        }
     }
 
     /*

@@ -5,7 +5,7 @@ import LoginPage from './Pages/LoginPage';
 import SessionsPage from './Pages/SessionsPage';
 
 export default class App extends React.Component {
-  render() {
+  render() {    
     return (
       <Router>
         <Scene key="root">
