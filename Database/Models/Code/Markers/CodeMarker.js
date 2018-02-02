@@ -1,6 +1,6 @@
 import Code from '../Code';
 
-const marker = ( codeObj ) => {
+export default marker = ( codeObj ) => {
     const code = codeObj.getAsPlainObject();
 
     code.validations++;

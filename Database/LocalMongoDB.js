@@ -11,7 +11,7 @@ export default class LocalMongoDB {
     }
 
     insert( data ) {
-        return new Promise( ( resolve, reject  => {
+        return new Promise( ( resolve, reject )  => {
             this.db.insert( data, ( error, newDoc ) => {
                 if( error ) {
                     reject( error );
@@ -19,7 +19,7 @@ export default class LocalMongoDB {
                 
                 resolve(  newDoc );                
             });
-        }));       
+        });       
     }
 
     find( query ) {
@@ -48,12 +48,12 @@ export default class LocalMongoDB {
 
     update( query, data ) {
         return new Promise( ( resolve, reject ) => {
-            this.db.update( query, data, ( error, doc ) => {
+            this.db.update( query, data, { returnUpdatedDocs: true }, ( error, replaced, affected ) => {
                 if( error ) {
                     reject( error );
                 }
 
-                resolve( doc );
+                resolve( affected );
             });
         });        
     }

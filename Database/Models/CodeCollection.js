@@ -23,11 +23,12 @@ export default class CodeCollection {
         for( let i = 0; i < 10; i++ ) {
             const code = {
                 id: i,
-                code: i,
+                code: `${i}`,
                 name: 'Code ' + i,
                 email: 'Code'+i+'@mail.to',
                 maxValidations: 1,
                 validations: 0,
+                out: true,
                 created_at: new Date(),
                 updated_at: new Date()
             };
@@ -46,7 +47,16 @@ export default class CodeCollection {
     }
 
     updateCode( code ) {
-        return this.db.update( { code: code.code }, code.getAsPlainObject() );
+        return new Promise( (resolve, reject) => {
+            this.db.update( { code: code.code }, code.getAsPlainObject() )
+                .then( code => {
+                    console.log( 'updated code' ); 
+                    console.log( code );
+
+                    resolve( code );
+                })
+                .catch( error => reject( error ) );
+        }); 
     }
 
     findCode( code ) {
@@ -73,5 +83,16 @@ export default class CodeCollection {
                     error => reject( error ) 
                 );
         });        
+    }
+
+    markCode( code ) {
+        console.log( 'Marking code' );
+        console.log( code );
+
+        const marked = code.marked();
+        console.log( 'marked:' );
+        console.log( marked );
+
+        return this.updateCode( marked );
     }
 }

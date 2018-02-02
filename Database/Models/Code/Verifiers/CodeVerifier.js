@@ -18,9 +18,8 @@ export default class CodeVerifier {
     }
 
     verify( codeObj, scanMode ) {
-        const code = code.getAsPlainObject();
-
-        console.log( "checking code: " + code.code );
+        const code = codeObj.getAsPlainObject();
+        
         const rules = this.rules;
         for( let j = 0; j < rules.length; j++ ){
             const rule = rules[ j ];
@@ -46,12 +45,12 @@ export default class CodeVerifier {
             }
             const result = rule.validate( values );
             if( result.action === "complete" ) {
-                console.info(code.code + " is valid!");
+                console.log(code.code + " is valid!");
                 return this.returnValidCode( result ) ;
             } else if (result.action === "break") {
-                console.error(code.code + " is not valid! ");
-                console.error(result.message);
-                return this.returnNotValidCode( verificationResult );
+                console.log(code.code + " is not valid! ");
+                console.log(result.message);
+                return this.returnNotValidCode( result );
             }
         };
     }

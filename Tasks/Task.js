@@ -78,8 +78,8 @@ export default class Task {
         this.runHandler();
 
         if( !this.stopRequested ) {
-            setTimeout( this.run(), this.frequency );
-        } else {
+           setTimeout( () => this.run(), this.frequency );
+        } else if( !this.isFinished() ) {
             this.setStateWaiting();
         }
     }
