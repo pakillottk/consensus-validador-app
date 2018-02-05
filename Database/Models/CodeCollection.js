@@ -1,48 +1,32 @@
 import DB from '../LocalMongoDB';
 import Code from './Code/Code';
+import CodeRoutes from './Code/Routes';
+
+import API from '../../Communication/API/API';
 
 export default class CodeCollection {
     constructor( session, collection ) {
         const filename = session.name + '_' + session.date + '_' + collection;
         //TODO: Makes DB persistent. Memory only for testing.
         this.db = new DB( filename, true, false ); 
+        //TODO: get the lastUpdate from the DB.
         this.lastUpdate = null;
-
         this.syncCollection();
     }
 
-    syncCollection() {
-        //TODO: Retrieve codes from the backend and store in DB.
-        
-        /*
-            DUMMY CODE FOR TESTING
-        */
-        
-        //Generates some random codes
-        console.log( 'entering dummy codes' );
-        for( let i = 0; i < 10; i++ ) {
-            const code = {
-                id: i,
-                code: `${i}`,
-                name: 'Code ' + i,
-                email: 'Code'+i+'@mail.to',
-                maxValidations: 1,
-                validations: 0,
-                out: true,
-                created_at: new Date(),
-                updated_at: new Date()
-            };
-
-            this.addCode( code ).then( ( code ) => console.log( code ) );
-        }
-        console.log( 'finished dummy codes' );
-
-        /* ================ */
+    async syncCollection() {
+        //TODO: Query only the codes after lastUpdate
+        const codes = await API.get( CodeRoutes.get );
+        codes.forEach( code => {
+            this.addCode( code );
+        });
 
         this.lastUpdate = new Date();
     }
 
     addCode( code ) {
+        console.log( 'adding code to local db' );
+        console.log( code );
         return this.db.insert( code );
     }
 
