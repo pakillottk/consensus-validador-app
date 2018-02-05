@@ -9,8 +9,7 @@ export default class ApiConnection {
         const url = this.connection.getFullURL( path );
         const request = new Request( url, { method: 'GET' });
     
-        const response = await this.connection.sendRequest( request );
-        return response.json();
+        return this.connection.sendRequest( request ).json();
     }
 
     async post( path, data ) {
@@ -20,7 +19,7 @@ export default class ApiConnection {
         const url = this.connection.getFullURL( path );
         const request = new Request( url, { method: 'POST', body: data });
 
-        return this.connection.sendRequest( request );
+        return this.connection.sendRequest( request ).json();
     }
 
     async put( path, data ) {
@@ -30,13 +29,13 @@ export default class ApiConnection {
         const url = this.connection.getFullURL( path );
         const request = new Request( url, { method: 'PUT', body: data });
 
-        return this.connection.sendRequest( request );
+        return this.connection.sendRequest( request ).json();
     }
 
     async delete( path ) {
         const url = this.connection.getFullURL( path );
         const request = new Request( url, { method: 'DELETE' });
 
-        return this.connection.sendRequest( request );
+        return this.connection.sendRequest( request ).json();
     }
 } 

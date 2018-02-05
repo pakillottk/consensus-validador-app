@@ -4,6 +4,7 @@ import CodeRoutes from './Code/Routes';
 
 import API from '../../Communication/API/API';
 
+//TODO: use websockets to allow realtime code insertion
 export default class CodeCollection {
     constructor( session, collection ) {
         const filename = session.name + '_' + session.date + '_' + collection;

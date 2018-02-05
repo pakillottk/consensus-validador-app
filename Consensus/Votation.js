@@ -6,7 +6,7 @@ export default class Votation {
         this.openedAt   = openedAt;
         this.consensus  = null; //The resulting code state
 
-        this.solver     = solver;
+        this.solver     = solver; //TODO: attach as default solver the remote API solver
     }
 
     vote( veredict ) {
