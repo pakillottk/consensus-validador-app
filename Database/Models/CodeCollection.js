@@ -50,9 +50,6 @@ export default class CodeCollection {
         return new Promise( (resolve, reject) => {
             this.db.update( { code: code.code }, code.getAsPlainObject() )
                 .then( code => {
-                    console.log( 'updated code' ); 
-                    console.log( code );
-
                     resolve( code );
                 })
                 .catch( error => reject( error ) );
@@ -66,7 +63,7 @@ export default class CodeCollection {
                     resolve( code === null ? code : new Code( code ) );
                 })
                 .catch( error => {
-                    reject( eerror )
+                    reject( error )
                 });
         });
     }
@@ -86,13 +83,7 @@ export default class CodeCollection {
     }
 
     markCode( code ) {
-        console.log( 'Marking code' );
-        console.log( code );
-
         const marked = code.marked();
-        console.log( 'marked:' );
-        console.log( marked );
-
         return this.updateCode( marked );
     }
 }

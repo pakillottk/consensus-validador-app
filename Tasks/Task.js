@@ -5,11 +5,13 @@ export default class Task {
     /*
         @frequency - Time (in ms) between Task's executions
     */
-    constructor( frequency ) {
+    constructor( frequency, onFinish ) {
         this.state = 'waiting';
         this.stopRequested = false;
+        this.finishRequested = false;
         this.finished = false;
         this.frequency = frequency || DEFAULT_TIME;
+        this.onFinish = onFinish || ( () => {} );
     }
 
     isWaiting() {
@@ -50,7 +52,7 @@ export default class Task {
 
     finish() {
         this.stop();
-        this.finished = true;
+        this.finishRequested = true;
     }
 
     finishAndFail() {
@@ -64,7 +66,8 @@ export default class Task {
     }
 
     start() {
-        this.stopRequested = false;
+        this.finishRequested = false;
+        this.stopRequested   = false;
         this.setStateRunning();
         this.run();
     }
@@ -79,8 +82,13 @@ export default class Task {
 
         if( !this.stopRequested ) {
            setTimeout( () => this.run(), this.frequency );
-        } else if( !this.isFinished() ) {
-            this.setStateWaiting();
+        } else {
+            if( this.finishRequested ) {
+                this.finished = true;
+                this.onFinish();
+            } else {
+                this.setStateWaiting();
+            }
         }
     }
 
