@@ -1,12 +1,13 @@
 import EventBased from './EventBased';
+import io from 'socket.io-client';
+import env from '../../env';
 
 export default class EventWebSocket extends EventBased {
     constructor( channel, onConnect, onDisconnect ) {
-        //TODO: create a websocket client
-        const client = null;
-        this.channel = channel;        
-
+        const client = io( env.events.url );
         super( client, onConnect, onDisconnect );
+
+        this.channel = channel;        
     }
 
     //TODO: implement the binding of onConnect, onDisconnect
