@@ -1,7 +1,6 @@
 import React from 'react';
 import { FlatList, StyleSheet, View, Text } from 'react-native';
-
-import LocalMongoDB from '../Database/LocalMongoDB';
+import API from '../Communication/API/API';
 
 export default class SessionsPage extends React.Component {
     constructor( props ) {
@@ -10,18 +9,18 @@ export default class SessionsPage extends React.Component {
         this.state = {
             sessions: []
         }
-
-        this.DB = new LocalMongoDB( undefined, true, false );
-        for( let i = 0; i < 50; i++ ) {
-            this.DB.insert({
-                id: i,
-                name: 'Sesion ' + (i+1)
-            }).then( ( session ) => this.addSession( session ) );
-        }
     }
 
-    addSession( session ) {
-        this.setState({ sessions: [...this.state.sessions, session ] })
+    async componentWillMount() {
+        await this.fetchSessions();
+    }
+
+    async fetchSessions() {
+        const sessionsResponse = await API.get( 'sessions' );
+        if( sessionsResponse.ok ) {
+            const sessions = await sessionsResponse.json();
+            this.setState({ sessions });
+        }
     }
     
     render() {

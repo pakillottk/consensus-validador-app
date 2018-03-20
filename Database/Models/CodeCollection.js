@@ -6,8 +6,8 @@ import API from '../../Communication/API/API';
 
 //TODO: use websockets to allow realtime code insertion
 export default class CodeCollection {
-    constructor( session, collection ) {
-        const filename = session.name + '_' + session.date + '_' + collection;
+    constructor( session ) {
+        const filename = session.name + '_' + session.date + '_' + API.me.username;
         //TODO: Makes DB persistent. Memory only for testing.
         this.db = new DB( filename, true, false ); 
         //TODO: get the lastUpdate from the DB.

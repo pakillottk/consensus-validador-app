@@ -11,6 +11,10 @@ export default class Connection {
     }
 
     getFullURL( path ) {
+        if( path[ 0 ] !== '/' && this.basePath !== '') {
+            path = '/' + path;
+        }
+
         return this.getBaseURL() + path;
     }
 
