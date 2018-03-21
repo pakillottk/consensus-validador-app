@@ -3,11 +3,15 @@ import config from '../../env';
 
 export default class ApiConnection {
     constructor( protocol, hostname, port, basePath, loginPath, logoutPath  ) {
-        this.connection = new Connection( protocol, hostname, port );
+        this.connection = new Connection( protocol, hostname, port, basePath );
         this.loginPath = loginPath || null;
         this.logoutPath = logoutPath || null;
         this.authTokens = {};
         this.me = null;
+    }
+
+    updateConnection( connection ) {
+        this.connection = connection;
     }
 
     getAuthHeader() {
@@ -29,20 +33,22 @@ export default class ApiConnection {
         return formBody.join('&');
     }
 
-    async attemptLogin( data ) {        
+    async attemptLogin( data ) {     
         const response = await this.post( this.loginPath, data, true );
         if( !response.ok ) {
             throw new Error( 'LOGIN FAILED' );  
         }
-        const tokens = await response.json();
+
+        setTimeout(() => null, 0);
+        const tokens = await response.json();        
         this.authTokens = {
             type: tokens.token_type,
             access: tokens.access_token,
             refresh: tokens.refresh_token
         };        
-
         const meResponse = await this.get( config.auth.mePath );
         if( meResponse.ok ) {
+            setTimeout(() => null, 0);
             this.me = await meResponse.json();
         }
     }

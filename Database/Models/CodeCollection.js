@@ -7,22 +7,41 @@ import API from '../../Communication/API/API';
 //TODO: use websockets to allow realtime code insertion
 export default class CodeCollection {
     constructor( session ) {
-        const filename = session.name + '_' + session.date + '_' + API.me.username;
+        this.session = session;
+        this.filename = session.name + '_' + session.date + '_' + API.me.username;
         //TODO: Makes DB persistent. Memory only for testing.
-        this.db = new DB( filename, true, false ); 
+        this.db = new DB( this.filename, false, false ); 
         //TODO: get the lastUpdate from the DB.
         this.lastUpdate = null;
+        this.validated = 0;
         this.syncCollection();
     }
 
     async syncCollection() {
         //TODO: Query only the codes after lastUpdate
-        const codes = await API.get( CodeRoutes.get );
-        codes.forEach( code => {
-            this.addCode( code );
+        const codesResponse = await API.get( CodeRoutes.get + '?session=' + this.session.id );
+        if( !codesResponse.ok ) {
+            return;
+        }
+
+        const codes = await codesResponse.json();
+        codes.forEach( async ( code ) => {
+            if( code.validations ) {
+                this.validated++;
+            }
+            const exists = await this.codeExists( code.code );
+            if( exists ) {
+                this.updateCode( new Code(code) );
+            } else {
+                this.addCode( code );
+            }
         });
 
         this.lastUpdate = new Date();
+    }
+
+    async getCodeCount() {
+        return await this.countCodes();
     }
 
     addCode( code ) {
@@ -32,6 +51,8 @@ export default class CodeCollection {
     }
 
     updateCode( code ) {
+        console.log( 'updating code in local db' );
+        console.log( code.getAsPlainObject() );
         return new Promise( (resolve, reject) => {
             this.db.update( { code: code.code }, code.getAsPlainObject() )
                 .then( code => {
@@ -65,6 +86,18 @@ export default class CodeCollection {
                     error => reject( error ) 
                 );
         });        
+    }
+
+    countCodes() {
+        return new Promise( ( resolve, reject ) => {
+            this.db.count({})
+                .then(
+                    count => resolve( count )
+                )
+                .catch(
+                    error => reject( error )
+                );
+        });
     }
 
     markCode( code ) {

@@ -1,6 +1,10 @@
 import React from 'react';
-import { FlatList, StyleSheet, View, Text } from 'react-native';
+import { Button, FlatList, StyleSheet, View, Text } from 'react-native';
+import { Actions } from 'react-native-router-flux';
+
 import API from '../Communication/API/API';
+import moment from 'moment';
+import 'moment/locale/es'
 
 export default class SessionsPage extends React.Component {
     constructor( props ) {
@@ -23,6 +27,10 @@ export default class SessionsPage extends React.Component {
         }
     }
     
+    startSession( session ) {
+        Actions.push( 'scan', {session} )
+    }
+
     render() {
         return(
             <FlatList
@@ -33,7 +41,17 @@ export default class SessionsPage extends React.Component {
                         const session = item.item;
                         return(
                             <View style={styles.container}>
-                                <Text>{session.name}</Text>
+                                <Text style={styles.nameText}>
+                                    {session.name}
+                                </Text>                                
+                                <Text style={styles.otherText}>{moment(session.date).locale('es').format('dddd DD MMMM YYYY HH:mm').toUpperCase()}</Text>
+                                <Text style={styles.otherText}> {session.location} </Text>
+                                <Text style={styles.otherText}> {session.recint} </Text>
+                                <Button 
+                                    color="#999"
+                                    onPress={() => this.startSession( session )}
+                                    title="ESCANEAR"
+                                />
                             </View>
                         );
                     }
@@ -49,8 +67,17 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#eee',
         borderWidth: 0.25,
-        borderColor: '#eee'
+        borderColor: '#ccc'
+    },
+    nameText: {
+        textAlign: 'center',
+        fontSize: 30,
+        color: '#999'
+    },
+    otherText: {
+        textAlign: 'center',
+        color: '#666'
     }
 });

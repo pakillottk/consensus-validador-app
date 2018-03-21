@@ -69,4 +69,16 @@ export default class LocalMongoDB {
             });
         });        
     }
+
+    count( query ) {
+        return new Promise( ( resolve, reject ) => {
+            this.db.count( query, ( error, elements ) => {
+                if( error ) {
+                    reject( error );
+                }
+
+                resolve( elements );
+            });
+        })
+    }
 }
