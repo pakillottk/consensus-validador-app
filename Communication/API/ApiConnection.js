@@ -39,7 +39,6 @@ export default class ApiConnection {
             throw new Error( 'LOGIN FAILED' );  
         }
 
-        setTimeout(() => null, 0);
         const tokens = await response.json();        
         this.authTokens = {
             type: tokens.token_type,
@@ -48,7 +47,6 @@ export default class ApiConnection {
         };        
         const meResponse = await this.get( config.auth.mePath );
         if( meResponse.ok ) {
-            setTimeout(() => null, 0);
             this.me = await meResponse.json();
         }
     }

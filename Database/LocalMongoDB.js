@@ -79,6 +79,6 @@ export default class LocalMongoDB {
 
                 resolve( elements );
             });
-        })
+        });
     }
 }

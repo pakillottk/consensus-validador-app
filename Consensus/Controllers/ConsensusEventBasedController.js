@@ -9,11 +9,10 @@ export default class ConsensusEventBasedController extends ConsensusController {
     }
 
     bindEvents() {
-        //TODO: attach the events to websocket
-        /*
+        this.eventHandler.onConnect = this.connetionRecovered;
+        this.eventHandler.onDisconnect = this.connectionLost;
         this.eventHandler.bind( 'votation_opened', ( data ) => this.votationOpened( data.votation ) );
         this.eventHandler.bind( 'votation_closed', ( data ) => this.votationClosed( data.votation ) );
-        */
     }
 
     connectionLost() {
@@ -24,7 +23,7 @@ export default class ConsensusEventBasedController extends ConsensusController {
         //TODO
     }
 
-    openVotation() {
-        //TODO: broadcast the votation
+    openVotation( votation ) {
+        //this.eventHandler.emit( 'open_votation', votation )
     }
 }

@@ -1,22 +1,45 @@
 import EventBased from './EventBased';
 import io from 'socket.io-client';
-import env from '../../env';
 
 export default class EventWebSocket extends EventBased {
-    constructor( channel, onConnect, onDisconnect ) {
-        const client = io( env.events.url );
-        super( client, onConnect, onDisconnect );
-
-        this.channel = channel;        
+    constructor( connection, channel, onConnect, onDisconnect ) {
+        const client = io( connection.getHostURL() );
+        super( client, onConnect, onDisconnect, channel );
     }
 
-    //TODO: implement the binding of onConnect, onDisconnect
+    disconnect() {
+        this.client.disconnect();
+    }
+
     attachConectionStatusEmitters() {
-        return true;
+        this.client.on( 'connect', () => {
+            this.emit( 'join', { room: this.channel, voter: true } )
+            if( this.onConnect ) {
+                this.onConnect()
+            }
+        });
+
+        this.client.on( 'welcome', data => {
+            this.nodeId = data.id;
+        })
+
+        this.client.on( 'disconnect', ()  => {
+            if( this.onDisconnect ) {
+                this.onDisconnect()
+            }
+        });
     }
 
     bind( event, callback ) {
-        //TODO
+        this.client.on( event, callback )
+    }
+
+    broadcast( data ) {
+        this.client.broadcast( data );
     }
     
+    emit( event, data ) {
+        console.log( 'emitting ' + event )
+        this.client.emit( event, data )
+    }
 }

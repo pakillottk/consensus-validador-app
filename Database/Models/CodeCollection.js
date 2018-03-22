@@ -6,20 +6,18 @@ import API from '../../Communication/API/API';
 
 //TODO: use websockets to allow realtime code insertion
 export default class CodeCollection {
-    constructor( session ) {
+    constructor( session, type ) {
         this.session = session;
-        this.filename = session.name + '_' + session.date + '_' + API.me.username;
-        //TODO: Makes DB persistent. Memory only for testing.
-        this.db = new DB( this.filename, false, false ); 
+        this.type = type;
+        this.filename = session.id + '_' + type.id + '_' + API.me.username;
+        this.db = new DB( this.filename, false, true ); 
         //TODO: get the lastUpdate from the DB.
         this.lastUpdate = null;
         this.validated = 0;
-        this.syncCollection();
     }
 
     async syncCollection() {
-        //TODO: Query only the codes after lastUpdate
-        const codesResponse = await API.get( CodeRoutes.get + '?session=' + this.session.id );
+        const codesResponse = await API.get( CodeRoutes.get + '?session=' + this.session.id + '&type_id='+this.type.id );
         if( !codesResponse.ok ) {
             return;
         }
@@ -29,11 +27,12 @@ export default class CodeCollection {
             if( code.validations ) {
                 this.validated++;
             }
+
             const exists = await this.codeExists( code.code );
             if( exists ) {
                 this.updateCode( new Code(code) );
             } else {
-                this.addCode( code );
+                this.addCode( code );                
             }
         });
 
@@ -42,6 +41,10 @@ export default class CodeCollection {
 
     async getCodeCount() {
         return await this.countCodes();
+    }
+
+    async getTypes() {
+        return await this.typesDB.find();
     }
 
     addCode( code ) {

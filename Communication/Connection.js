@@ -6,8 +6,12 @@ export default class Connection {
         this.basePath = basePath || '';
     }
 
+    getHostURL() {
+       return this.protocol + '://' + this.hostname + ':' + this.port; 
+    }
+
     getBaseURL() {
-        return this.protocol + '://' + this.hostname + ':' + this.port + '/' + this.basePath; 
+        return this.getHostURL() + '/' + this.basePath; 
     }
 
     getFullURL( path ) {

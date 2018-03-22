@@ -15,8 +15,8 @@ export default class LoginPage extends React.Component {
             protocol: 'http',
             host: '192.168.1.12',
             port: '3005',
-            username: 'root',
-            password: 'root',
+            username: 'scanner',
+            password: 'scanner',
             connectDisabled: false,
             logged: false
         }
