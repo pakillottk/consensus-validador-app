@@ -14,7 +14,7 @@ export default class CloseVotationTask extends TaskOneShot {
             console.log( this.votation );
 
             this.codeCollection.updateCode( this.votation.consensus )
-            .then( () => { resolve() } )
+            .then( () => { this.onFinish( this.votation ); resolve(); } )
             .catch( error => { reject( error ) });
         });
     }

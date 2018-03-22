@@ -1,67 +1,58 @@
 import React from 'react'
-import { View, Text } from 'react-native'
+import { Button, View, Text } from 'react-native'
 
+import ConsensusRobustController from '../Consensus/Controllers/ConsensusRobustController'
+import CameraScanner from '../Components/CameraScanner/CameraScanner'
 import API from '../Communication/API/API'
-import CodeCollection from '../Database/Models/CodeCollection'
-
 import moment from 'moment'
 import 'moment/locale/es'
 
-import EventWebSocket from '../Communication/EventBased/EventWebSocket'
 
 export default class ScanPage extends React.Component {
     constructor( props ) {
         super( props )
 
         this.state = {
-            collections: [],
-            ws: [],
-            validated: 0,
-            toValidate: 0
+            controller: null,
+            lastScanData: null,
+            openCamera: false
         }
     } 
 
     async componentWillMount() {
         const { session } = this.props
-        let validated = 0;
-        let toValidate = 0;
         const typesResponse = await API.get( 'types?session=' + session.id );
         if( typesResponse.ok ) {
-            const collections = [];
-            const ws = [];
             const types = await typesResponse.json();
-            for( let i = 0; i < types.length; types++ ) {
-                const type = types[ i ];
-                const collection = new CodeCollection( session, type );
-                await collection.syncCollection();
-                const codeCount = await collection.getCodeCount();
-                toValidate += codeCount;
-                validated += collection.validated;
+            const controller = new ConsensusRobustController( session, types );
+            await controller.initialize( session, types );
 
-                collections.push( collection );
-                ws.push( new EventWebSocket( 
-                    API.connection,
-                    session.id + '-'+session.name+'-'+type.id+'-'+type.type 
-                ));
-            }
-
-            this.setState({
-                toValidate: toValidate, 
-                validated: validated, 
-                collections: collections, 
-                ws: ws
-            });
+            this.setState({ controller });
         }
     }
 
-    componentWillUnmount() {
-        this.state.ws.forEach( socket => {
-            socket.disconnect();
-        })
+    openCamera( value ) {
+        this.setState({openCamera: value})
+    }
+
+    codeReceived( code ) {
+        console.log( code )
+        this.openCamera( false )
+        this.state.controller.codeScanned( code );
     }
 
     render() {
         const { session } = this.props
+        if( this.state.openCamera ) {
+            return(
+                <CameraScanner 
+                    onBarCodeRead={({type, data}) => {
+                        this.codeReceived( data )
+                    }}
+                />
+            );
+        }        
+
         return(
             <View>
                 <View style={{backgroundColor:'#333'}}>
@@ -76,8 +67,12 @@ export default class ScanPage extends React.Component {
                 </View>
                 <View style={{backgroundColor:'#eee', borderBottomWidth: 0.75, borderBottomColor:'#aaa'}}>
                     <Text style={{color:'#999', textAlign: 'center', fontSize:10, marginBottom: 0}}>ESCANEADO</Text>
-                    <Text style={{color:'#666', textAlign: 'center', fontSize:25, marginBottom: 0}}>{this.state.validated}/{this.state.toValidate}</Text>
+                    <Text style={{color:'#666', textAlign: 'center', fontSize:25, marginBottom: 0}}>{0}/{0}</Text>
                 </View>
+                <Button onPress={() => this.openCamera( true )} title="CÁMARA"/>
+                {this.state.lastScanData === null && <View style={{backgroundColor:'#aaa'}}>
+                    <Text style={{color:'#777', fontSize: 45, textAlign: 'center'}}>LISTO PARA ESCANEAR</Text>
+                </View>} 
             </View>
         )
     }

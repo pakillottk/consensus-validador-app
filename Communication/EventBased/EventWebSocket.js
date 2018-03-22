@@ -14,7 +14,9 @@ export default class EventWebSocket extends EventBased {
     attachConectionStatusEmitters() {
         this.client.on( 'connect', () => {
             this.emit( 'join', { room: this.channel, voter: true } )
+            
             if( this.onConnect ) {
+                console.log( 'callbackeo' )
                 this.onConnect()
             }
         });

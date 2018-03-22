@@ -14,15 +14,12 @@ export default class EmitVeredictTask extends TaskOneShot {
             this.codeCollection.findCode( this.votation.code )
                 .then( codeDB => {
                     let veredict = null;
-                    if( codeDB === null ) {
-                        veredict = { verification: 'blank', message: 'Code not found' };
-                    } else {
+                    if( codeDB !== null ) {
                         const codeObj = new Code( codeDB );
                         veredict = codeObj.verify( this.votation.scanMode );
+                        this.votation.vote( veredict );
                     }
-
-                    this.votation.vote( veredict );
-                    
+                                        
                     resolve();
                 })
                 .catch( error =>  { reject( error ) } );

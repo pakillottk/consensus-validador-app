@@ -4,8 +4,9 @@ import LocalVotationSolver from '../VotationSolvers/LocalVotationSolver';
 import Code from '../../Database/Models/Code/Code';
 
 export default class ConsensusLocalController extends ConsensusController {
-    constructor( codeCollection ) {
+    constructor( codeCollection, onVotationClosed ) {
         super( codeCollection );
+        this.onVotationClosed = onVotationClosed;
     }
 
     openVotation( votation ) {
@@ -13,26 +14,24 @@ export default class ConsensusLocalController extends ConsensusController {
         this.votationOpened( votation );
     }
 
-    onVoteEmitted( votation, veredict ) {
-        if( veredict.verification === 'blank' ) {
-            this.votationCloseFinished( votation );
-        } else {
-            this.codeCollection.findCode( votation.code )
-                .then( codeDB => {
-                    const code = new Code( codeDB );
-                    if( veredict.verification === 'valid' ) {
-                        votation.consensus = code.marked();
-                    } else {
-                        votation.consensus = code;
-                    }
-
-                    this.votationClosed( votation );
-                })
-        }            
+    onVoteEmitted( votation, veredict ) {   
+        this.codeCollection.findCode( votation.code )
+            .then( codeDB => {
+                const code = new Code( codeDB );
+                if( veredict.verification === 'valid' ) {
+                    votation.consensus = code.marked();
+                } else {
+                    votation.consensus = code;
+                }
+                
+                this.votationClosed( votation );
+            })
     }
 
     votationCloseFinished( votation ) {
         console.log( 'votation closed' );
         console.log( votation );
+
+        this.onVotationClosed( votation );
     }
 }
