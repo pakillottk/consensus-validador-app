@@ -22,20 +22,28 @@ export default class CodeCollection {
             return;
         }
 
+        let totalValidated = 0;
         const codes = await codesResponse.json();
         codes.forEach( async ( code ) => {
-            if( code.validations ) {
-                this.validated++;
-            }
-
-            const exists = await this.codeExists( code.code );
-            if( exists ) {
-                this.updateCode( new Code(code) );
+            const codeDB = await this.findCode( code.code );
+            if( codeDB !== null ) {
+                if( code.updated_at > codeDB.updated_at ) {
+                    this.updateCode( new Code(code) );
+                } else {
+                    if( codeDB.validations ) {
+                        totalValidated++;
+                    }
+                }
             } else {
+                if( code.validations ) {
+                    this.totalValidated++;
+                }
+
                 this.addCode( code );                
             }
         });
 
+        this.validated = totalValidated;
         this.lastUpdate = new Date();
     }
 

@@ -19,6 +19,16 @@ export default class Votation {
             throw 'The votation is missing the solver';
         }
         
-        this.solver.emitVote( veredict );
+        this.solver.emitVote( {veredict, votation: this.getAsPlainObject()} );
+    }
+
+    getAsPlainObject() {
+        return {
+            openedBy: this.openedBy,
+            openedAt: this.openedAt,
+            scanMode: this.scanMode,
+            code: this.code,
+            consensus: this.consensus
+        }
     }
 }

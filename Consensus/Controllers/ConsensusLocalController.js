@@ -5,8 +5,7 @@ import Code from '../../Database/Models/Code/Code';
 
 export default class ConsensusLocalController extends ConsensusController {
     constructor( codeCollection, onVotationClosed ) {
-        super( codeCollection );
-        this.onVotationClosed = onVotationClosed;
+        super( codeCollection, onVotationClosed );
     }
 
     openVotation( votation ) {
@@ -26,12 +25,5 @@ export default class ConsensusLocalController extends ConsensusController {
                 
                 this.votationClosed( votation );
             })
-    }
-
-    votationCloseFinished( votation ) {
-        console.log( 'votation closed' );
-        console.log( votation );
-
-        this.onVotationClosed( votation );
     }
 }

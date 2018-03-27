@@ -6,14 +6,14 @@ import Votation from '../Votation';
 import Code from '../../Database/Models/Code/Code';
 
 export default class ConsensusController {
-    constructor( codeCollection ) {
+    constructor( codeCollection, onVotationClosed ) {
         this.codeCollection = codeCollection;
-
+        this.onVotationClosed = onVotationClosed;
         this.votingTask = new QueueTask();
     }
 
     codeScanned( code, scanMode ) {
-        this.openVotation( new Votation( 'myId', code, 'E', new Date() ) );
+        this.openVotation( new Votation( null, code, 'E', new Date() ) );
     }
 
     startTask() {
@@ -43,6 +43,11 @@ export default class ConsensusController {
     }
 
     votationCloseFinished( votation ) {
-        //Impement in subclasses, if necessary
+        console.log( 'votation closed' );
+        console.log( votation );
+
+        if( this.onVotationClosed ) {
+            this.onVotationClosed( votation, this.codeCollection.type.type );
+        }
     }
 } 

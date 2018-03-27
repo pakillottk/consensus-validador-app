@@ -13,7 +13,7 @@ export default class CodeVerifier {
     returnNotValidCode( verificationResult ) {
         return {
             verification:'not_valid',
-            error: verificationResult.message
+            message: verificationResult.message
         };
     }
 

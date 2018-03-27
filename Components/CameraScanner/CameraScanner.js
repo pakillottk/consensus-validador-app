@@ -9,7 +9,6 @@ export default class CameraScanner extends React.Component {
 
    async componentWillMount() {
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
-    console.log( status )
     this.setState({hasCameraPermission: status === 'granted'});
   }
 
@@ -17,9 +16,9 @@ export default class CameraScanner extends React.Component {
     const { hasCameraPermission } = this.state;
 
     if (hasCameraPermission === null) {
-      return <Text>Requesting for camera permission</Text>;
+      return <Text>Cargando...</Text>;
     } else if (hasCameraPermission === false) {
-      return <Text>No access to camera</Text>;
+      return <Text>Acceso a la cámara denegado.</Text>;
     } else {
       return (
         <View style={{ flex: 1 }}>

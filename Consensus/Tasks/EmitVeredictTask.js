@@ -17,7 +17,11 @@ export default class EmitVeredictTask extends TaskOneShot {
                     if( codeDB !== null ) {
                         const codeObj = new Code( codeDB );
                         veredict = codeObj.verify( this.votation.scanMode );
-                        this.votation.vote( veredict );
+                        marked = codeObj.marked();
+                        this.votation.vote({
+                            ...veredict, 
+                            proposal: veredict.verification === 'valid' ? marked.getAsPlainObject() : codeObj.getAsPlainObject()
+                        });
                     }
                                         
                     resolve();
