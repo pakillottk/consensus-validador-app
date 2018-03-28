@@ -56,14 +56,14 @@ export default class CodeCollection {
     }
 
     addCode( code ) {
-        console.log( 'adding code to local db' );
-        console.log( code );
+        //console.log( 'adding code to local db' );
+        //console.log( code );
         return this.db.insert( code );
     }
 
     updateCode( code ) {
-        console.log( 'updating code in local db' );
-        console.log( code.getAsPlainObject() );
+        //console.log( 'updating code in local db' );
+        //console.log( code.getAsPlainObject() );
         return new Promise( (resolve, reject) => {
             this.db.update( { code: code.code }, code.getAsPlainObject() )
                 .then( code => {

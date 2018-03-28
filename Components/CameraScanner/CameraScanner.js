@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Button, StyleSheet, Text, View } from 'react-native';
 import { BarCodeScanner, Permissions } from 'expo';
 
 export default class CameraScanner extends React.Component {
@@ -22,6 +22,7 @@ export default class CameraScanner extends React.Component {
     } else {
       return (
         <View style={{ flex: 1 }}>
+          <Button color="red" title="CANCELAR" onPress={() => this.props.onBarCodeRead( null )}/>
           <BarCodeScanner
             onBarCodeRead={this.props.onBarCodeRead}
             style={StyleSheet.absoluteFill}

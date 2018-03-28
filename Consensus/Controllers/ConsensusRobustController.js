@@ -76,7 +76,7 @@ export default class ConsensusRobustController {
     }
 
     codeScanned( code ) {
-        console.log( 'to vote: ' + code )
+        //console.log( 'to vote: ' + code )
         if( this.isOnline ) {
             this.socketControllers.forEach( controller => {
                 controller.codeScanned( code )
@@ -89,20 +89,25 @@ export default class ConsensusRobustController {
     }
 
     socketConnected() {
-        console.log( 'connection okey' );
+        //console.log( 'connection okey' );
         this.isOnline = true;
     }
 
     socketDisconnected() {
-        console.log( 'lost connection' );
+        //console.log( 'lost connection' );
         this.isOnline = false; 
     }
 
     votationClosed( votation ) {
-        console.log( 'closed' )
+        //console.log( 'closed' )
     }
     
     votationEnded( votation, type ) {
+        const transportTime = new Date().getTime() - new Date( votation.closed_at ).getTime();
+        console.log( 'votation end' );
+        console.log( 'elapsed: ' + votation.elapsed );
+        console.log( 'time to receive: ' + transportTime );
+
         //TODO: check votation opened by this node
         if( votation.consensus === null ) {
             this.lastScanHandler({

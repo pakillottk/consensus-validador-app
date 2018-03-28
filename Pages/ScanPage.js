@@ -1,8 +1,9 @@
 import React from 'react'
-import { Button, View, Text } from 'react-native'
+import { Button, View, Text, KeyboardAvoidingView } from 'react-native'
 
 import ConsensusRobustController from '../Consensus/Controllers/ConsensusRobustController'
 import CameraScanner from '../Components/CameraScanner/CameraScanner'
+import EmbedScanner from '../Components/EmbedScanner/EmbedScanner'
 import API from '../Communication/API/API'
 import moment from 'moment'
 import 'moment/locale/es'
@@ -41,11 +42,19 @@ export default class ScanPage extends React.Component {
         };
     }
 
+    componentDidUpdate() {
+        console.log( 'view updated' );
+    }
+
     openCamera( value ) {
         this.setState({openCamera: value})
     }
 
     codeReceived( code ) {
+        if( code === null ) {
+            return;
+        }
+
         console.log( code )
         this.openCamera( false )
         if(  this.state.controller ) {
@@ -105,7 +114,7 @@ export default class ScanPage extends React.Component {
         }        
 
         return(
-            <View>
+            <KeyboardAvoidingView>
                 <View style={{backgroundColor:'#333'}}>
                     <Text style={{color:'#666', textAlign: 'center', fontSize:10, marginBottom: 0}}>ESCANEANDO COMO</Text>
                     <Text style={{color:'#999', textAlign: 'center', fontSize:25, marginTop: 0}}>{API.me.username}</Text>
@@ -121,11 +130,15 @@ export default class ScanPage extends React.Component {
                     <Text style={{color:'#666', textAlign: 'center', fontSize:25, marginBottom: 0}}>{this.state.scanned}/{this.state.totalCodes}</Text>
                 </View>
                 <Button onPress={() => this.openCamera( true )} title="CÁMARA"/>
+                <View> 
+                    <Text style={{textAlign:'center'}}> LECTURA </Text>
+                    <EmbedScanner onLecture={( code ) => this.codeReceived( code ) }/>
+                </View>
                 {this.state.lastScanData === null && <View style={{backgroundColor:'#aaa'}}>
                     <Text style={{color:'#777', fontSize: 45, textAlign: 'center'}}>LISTO PARA ESCANEAR</Text>
                 </View>}
                 {this.state.lastScanData !== null && this.renderLastScan()} 
-            </View>
+            </KeyboardAvoidingView>
         )
     }
 }

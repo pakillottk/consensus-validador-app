@@ -22,7 +22,7 @@ export default class Code {
         this.code           = code || null;
         this.name           = name || null;
         this.email          = email || null;
-        this.maxValidations = maxValidations || -1;
+        this.maxValidations = maxValidations === undefined ? -1 : maxValidations;
         this.validations    = validations || 0;
         this.out            = out || true;
         this.created_at     = created_at || null;

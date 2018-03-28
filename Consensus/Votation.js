@@ -10,10 +10,10 @@ export default class Votation {
     }
 
     vote( veredict ) {
-        console.log( 'voting' );
-        console.log( this.code );
-        console.log( 'veredict' );
-        console.log( veredict );
+        //console.log( 'voting' );
+        //console.log( this.code );
+        //console.log( 'veredict' );
+        //console.log( veredict );
 
         if( !this.solver ) {
             throw 'The votation is missing the solver';

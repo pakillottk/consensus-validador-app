@@ -12,8 +12,8 @@ export default class ConsensusEventBasedController extends ConsensusController {
 
     bindEvents() {
         this.eventHandler.bind( 'votation_opened', ( data ) => {
-            console.log( 'received_votation' );
-            console.log( data );
+            //console.log( 'received_votation' );
+            //console.log( data );
             const votation = new Votation( 
                 data.openedBy, 
                 data.code, 
@@ -23,7 +23,7 @@ export default class ConsensusEventBasedController extends ConsensusController {
             this.votationOpened( votation )
         });
         this.eventHandler.bind( 'votation_closed', ( veredict ) => {
-            console.log( veredict );
+            //console.log( veredict );
             this.votationClosed( veredict );
         });
     }

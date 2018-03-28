@@ -19,12 +19,13 @@ export default class CodeVerifier {
 
     verify( codeObj, scanMode ) {
         const code = codeObj.getAsPlainObject();
+        //console.log( code );
         
         const rules = this.rules;
         for( let j = 0; j < rules.length; j++ ){
             const rule = rules[ j ];
 
-            console.log( "evaluating rule: " + j );
+            //console.log( "evaluating rule: " + j );
 
             const values = [];
             for( let i = 0; i < rule.values.length; i++ ) {
@@ -45,11 +46,11 @@ export default class CodeVerifier {
             }
             const result = rule.validate( values );
             if( result.action === "complete" ) {
-                console.log(code.code + " is valid!");
+                //console.log(code.code + " is valid!");
                 return this.returnValidCode( result ) ;
             } else if (result.action === "break") {
-                console.log(code.code + " is not valid! ");
-                console.log(result.message);
+                //console.log(code.code + " is not valid! ");
+                //console.log(result.message);
                 return this.returnNotValidCode( result );
             }
         };

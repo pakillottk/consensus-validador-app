@@ -43,8 +43,8 @@ export default class ConsensusController {
     }
 
     votationCloseFinished( votation ) {
-        console.log( 'votation closed' );
-        console.log( votation );
+        //console.log( 'votation closed' );
+        //console.log( votation );
 
         if( this.onVotationClosed ) {
             this.onVotationClosed( votation, this.codeCollection.type.type );
