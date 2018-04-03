@@ -4,6 +4,7 @@ import ConsensusEventBasedController from './ConsensusEventBasedController'
 import EventWebSocket from '../../Communication/EventBased/EventWebSocket'
 
 import API from '../../Communication/API/API'
+import Code from '../../Database/Models/Code/Code';
 
 //Hybrid controller that alternates local and EventBased on network errors.
 export default class ConsensusRobustController {
@@ -18,6 +19,7 @@ export default class ConsensusRobustController {
         this.validated = 0;
 
         this.isOnline = false;
+        this.votationEnded = this.votationEnded.bind( this );
     }
 
     async initialize( session, types ) { 
@@ -77,29 +79,46 @@ export default class ConsensusRobustController {
 
     codeScanned( code ) {
         //console.log( 'to vote: ' + code )
+        let notFoundIn = 0;
         if( this.isOnline ) {
-            this.socketControllers.forEach( controller => {
-                controller.codeScanned( code )
-            })
+            for(let i = 0; i < this.socketControllers.length; i++) {
+                const controller = this.socketControllers[ i ];
+                if( controller.codeCollection.codeExists( code ) ){
+                    controller.codeScanned( code );
+                    break;
+                } else {
+                    notFoundIn++;
+                }
+            }
+
+            if( notFoundIn === this.socketControllers.length ) {
+                this.socketControllers[ 0 ].codeScanned( code );
+            }
         } else {
-            this.localControllers.forEach( controller => {
-                controller.codeScanned( code )
-            })
+            for(let i = 0; i < this.localControllers.length; i++) {
+                const controller = this.localControllers[ i ];
+                if( controller.codeCollection.codeExists( code ) ){
+                    controller.codeScanned( code );
+                    break;
+                } else {
+                    notFoundIn++;
+                }
+            }
+
+            if( notFoundIn === this.localControllers.length ) {
+                this.localControllers[ 0 ].codeScanned( code );
+            }
         }
     }
 
     socketConnected() {
-        //console.log( 'connection okey' );
+        console.log( 'connection okey' );
         this.isOnline = true;
     }
 
     socketDisconnected() {
-        //console.log( 'lost connection' );
+        console.log( 'lost connection' );
         this.isOnline = false; 
-    }
-
-    votationClosed( votation ) {
-        //console.log( 'closed' )
     }
     
     votationEnded( votation, type ) {
@@ -109,12 +128,12 @@ export default class ConsensusRobustController {
         console.log( 'time to receive: ' + transportTime );
 
         //TODO: check votation opened by this node
-        if( votation.consensus === null ) {
+        if( votation.consensus.id === undefined ) {
             this.lastScanHandler({
                 verification: votation.verification,
-                code: '',
+                code: votation.consensus.code,
                 name: '',
-                type: type,
+                type: '',
                 message: 'El código no existe.'
             });
         } else {

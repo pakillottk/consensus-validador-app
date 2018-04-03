@@ -24,7 +24,7 @@ export default class Code {
         this.email          = email || null;
         this.maxValidations = maxValidations === undefined ? -1 : maxValidations;
         this.validations    = validations || 0;
-        this.out            = out || true;
+        this.out            = out === undefined ? true : out;
         this.created_at     = created_at || null;
         this.updated_at     = updated_at || null;
     }

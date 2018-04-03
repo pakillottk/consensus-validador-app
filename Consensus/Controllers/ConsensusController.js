@@ -34,8 +34,10 @@ export default class ConsensusController {
     }
 
     votationClosed( votation ) {
-        if( votation.consensus === null ) {
+        console.log( votation );
+        if( votation.consensus.id === undefined ) {
             //Nothing to do. Code doesn't exists
+            this.votationCloseFinished( votation );
             return;
         }
         votation.consensus = new Code( votation.consensus );

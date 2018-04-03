@@ -34,7 +34,9 @@ export default class ScanPage extends React.Component {
     }
 
     componentWillUnmount() {
-        this.state.controller.stop();
+        if( this.state.controller ) {
+            this.state.controller.stop();
+        }
         this.state = {
             controller: null,
             lastScanData: null,
