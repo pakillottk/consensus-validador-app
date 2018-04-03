@@ -15,7 +15,6 @@ export default class EmitVeredictTask extends TaskOneShot {
                 .then( codeDB => {
                     let veredict = null;
                     if( codeDB !== null ) {
-                        console.log( codeDB );
                         const codeObj = new Code( codeDB );
                         veredict = codeObj.verify( this.votation.scanMode );
                         marked = codeObj.marked();

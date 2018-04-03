@@ -8,22 +8,32 @@ export default class ConsensusLocalController extends ConsensusController {
         super( codeCollection, onVotationClosed );
     }
 
-    openVotation( votation ) {
-        votation.solver = new LocalVotationSolver( ( veredict ) => this.onVoteEmitted( votation, veredict ) );
-        this.votationOpened( votation );
+    async openVotation( votation ) {
+        if( await this.codeCollection.codeExists( votation.code ) ) {
+            votation.solver = new LocalVotationSolver( ( veredict ) => this.onVoteEmitted( votation, veredict ) );
+            this.votationOpened( votation );
+        } else {
+            this.votationClosed({
+                consensus: { code: votation.code },
+                message: 'El código no existe...',
+                verification: 'not_valid'
+            });
+        }        
     }
 
-    onVoteEmitted( votation, veredict ) {   
+    onVoteEmitted( votation, veredict ) {
+        delete veredict.veredict.proposal;
+        
         this.codeCollection.findCode( votation.code )
             .then( codeDB => {
                 const code = new Code( codeDB );
                 if( veredict.verification === 'valid' ) {
-                    votation.consensus = code.marked();
+                    veredict.veredict.consensus = code.marked();
                 } else {
-                    votation.consensus = code;
+                    veredict.veredict.consensus = code;
                 }
-                
-                this.votationClosed( votation );
-            })
-    }
+                console.log( veredict.veredict );
+                this.votationClosed( veredict.veredict );
+            });
+    }    
 }

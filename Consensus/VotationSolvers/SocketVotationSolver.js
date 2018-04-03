@@ -8,6 +8,6 @@ export default class SocketVotationSolver extends VotationSolver {
     }
 
     emitVote( veredict ) {
-        this.socket.emit( 'vote', veredict );
+        this.socket.emit( 'vote', {room: this.socket.channel, veredict} );
     }
 }

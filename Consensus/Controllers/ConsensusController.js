@@ -13,7 +13,7 @@ export default class ConsensusController {
     }
 
     codeScanned( code, scanMode ) {
-        this.openVotation( new Votation( null, code, 'E', new Date() ) );
+        this.openVotation( new Votation( null, code, scanMode, new Date() ) );
     }
 
     startTask() {
@@ -34,7 +34,6 @@ export default class ConsensusController {
     }
 
     votationClosed( votation ) {
-        console.log( votation );
         if( votation.consensus.id === undefined ) {
             //Nothing to do. Code doesn't exists
             this.votationCloseFinished( votation );
@@ -45,7 +44,7 @@ export default class ConsensusController {
     }
 
     votationCloseFinished( votation ) {
-        //console.log( 'votation closed' );
+        console.log( 'votation closed' );
         //console.log( votation );
 
         if( this.onVotationClosed ) {

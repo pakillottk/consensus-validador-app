@@ -52,8 +52,8 @@ export default class ConsensusRobustController {
                 socketController    
             );
 
-            const localController = new ConsensusLocalController( collection, 
-                ( votation ) => this.votationClosed( votation ), 
+            const localController = new ConsensusLocalController( 
+                collection, 
                 this.votationEnded.bind( this )
             );
             localController.startTask();
@@ -77,14 +77,15 @@ export default class ConsensusRobustController {
         });
     }
 
-    codeScanned( code ) {
+    async codeScanned( code, mode ) {
         //console.log( 'to vote: ' + code )
         let notFoundIn = 0;
+
         if( this.isOnline ) {
             for(let i = 0; i < this.socketControllers.length; i++) {
                 const controller = this.socketControllers[ i ];
-                if( controller.codeCollection.codeExists( code ) ){
-                    controller.codeScanned( code );
+                if( await controller.codeCollection.codeExists( code ) ){
+                    controller.codeScanned( code, mode );
                     break;
                 } else {
                     notFoundIn++;
@@ -92,13 +93,14 @@ export default class ConsensusRobustController {
             }
 
             if( notFoundIn === this.socketControllers.length ) {
-                this.socketControllers[ 0 ].codeScanned( code );
+                console.log( 'code not found' );
+                this.socketControllers[ 0 ].codeScanned( code, mode );
             }
-        } else {
+        } else { 
             for(let i = 0; i < this.localControllers.length; i++) {
                 const controller = this.localControllers[ i ];
-                if( controller.codeCollection.codeExists( code ) ){
-                    controller.codeScanned( code );
+                if( await controller.codeCollection.codeExists( code ) ){
+                    controller.codeScanned( code, mode );
                     break;
                 } else {
                     notFoundIn++;
@@ -106,7 +108,8 @@ export default class ConsensusRobustController {
             }
 
             if( notFoundIn === this.localControllers.length ) {
-                this.localControllers[ 0 ].codeScanned( code );
+                console.log( 'code not found' );
+                this.localControllers[ 0 ].codeScanned( code, mode );
             }
         }
     }

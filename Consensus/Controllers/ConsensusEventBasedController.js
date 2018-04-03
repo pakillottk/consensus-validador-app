@@ -29,7 +29,7 @@ export default class ConsensusEventBasedController extends ConsensusController {
     }
 
     openVotation( votation ) {
-        votation =  {...votation.getAsPlainObject(), openedBy: this.eventHandler.nodeId};
-        this.eventHandler.emit( 'open_votation', votation )
+        votation =  {...votation.getAsPlainObject(), openedBy: this.eventHandler.nodeId };
+        this.eventHandler.emit( 'open_votation', { room: this.eventHandler.channel, votation } )
     }
 }

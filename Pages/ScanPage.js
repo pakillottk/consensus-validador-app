@@ -16,6 +16,7 @@ export default class ScanPage extends React.Component {
             controller: null,
             lastScanData: null,
             openCamera: false,
+            scanMode: 'E',
             totalCodes: 0,
             scanned: 0
         }
@@ -52,15 +53,21 @@ export default class ScanPage extends React.Component {
         this.setState({openCamera: value})
     }
 
+    swithScanMode() {
+        this.setState({
+            scanMode: this.state.scanMode === 'E' ? 'O' : 'E'
+        });
+    }
+
     codeReceived( code ) {
         if( code === null ) {
             return;
         }
 
-        console.log( code )
+        console.log( code + ' ' + this.state.scanMode );
         this.openCamera( false )
         if(  this.state.controller ) {
-            this.state.controller.codeScanned( code );
+            this.state.controller.codeScanned( code, this.state.scanMode );
         }
     }
 
@@ -126,6 +133,10 @@ export default class ScanPage extends React.Component {
                     <Text style={{color:'#999', fontSize: 10, textAlign: 'center'}}>{session.location}</Text>
                     <Text style={{color:'#999', fontSize: 10, textAlign: 'center'}}>{session.recint}</Text>
                     <Text style={{color:'#999', fontSize: 10, textAlign: 'center'}}>{moment(session.date).locale('es').format( 'dddd DD MMMM YYYY HH:mm' )}</Text>
+                </View>
+                <View style={{backgroundColor:'#666'}}>
+                    <Button color="darkgreen" onPress={() => this.swithScanMode()} title="CAMBIAR E/S"/>
+                    <Text style={{color:'#ccc', fontSize: 20}}>MODO ESCANEO: { this.state.scanMode === 'E' ? 'ENTRADA':'SALIDA' } </Text>
                 </View>
                 <View style={{backgroundColor:'#eee', borderBottomWidth: 0.75, borderBottomColor:'#aaa'}}>
                     <Text style={{color:'#999', textAlign: 'center', fontSize:10, marginBottom: 0}}>ESCANEADO</Text>
