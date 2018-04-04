@@ -44,11 +44,7 @@ export default class ScanPage extends React.Component {
             openCamera: false
         };
     }
-
-    componentDidUpdate() {
-        console.log( 'view updated' );
-    }
-
+    
     openCamera( value ) {
         this.setState({openCamera: value})
     }
@@ -73,7 +69,7 @@ export default class ScanPage extends React.Component {
 
     receiveLastScan( data ) {
         console.log( 'received last scan' );
-        this.setState({ lastScanData: data, scanned: data.verification === 'valid' ? this.state.scanned + 1 : this.state.scanned });
+        this.setState({ lastScanData: data, scanned: this.state.controller.validated });
     }
 
     renderLastScan() {
@@ -135,8 +131,24 @@ export default class ScanPage extends React.Component {
                     <Text style={{color:'#999', fontSize: 10, textAlign: 'center'}}>{moment(session.date).locale('es').format( 'dddd DD MMMM YYYY HH:mm' )}</Text>
                 </View>
                 <View style={{backgroundColor:'#666'}}>
+                    <Text 
+                        style={{
+                            textAlign:'center', 
+                            color:'#ccc', 
+                            fontSize: 18
+                        }}
+                    >
+                        MODO ESCANEO: 
+                        <Text 
+                            style={{
+                                color: this.state.scanMode === 'E' ? 'lightgreen':'red',
+                                fontSize: 20
+                            }}
+                        >
+                            { this.state.scanMode === 'E' ? ' ENTRADA':' SALIDA' } 
+                        </Text>
+                    </Text>
                     <Button color="darkgreen" onPress={() => this.swithScanMode()} title="CAMBIAR E/S"/>
-                    <Text style={{color:'#ccc', fontSize: 20}}>MODO ESCANEO: { this.state.scanMode === 'E' ? 'ENTRADA':'SALIDA' } </Text>
                 </View>
                 <View style={{backgroundColor:'#eee', borderBottomWidth: 0.75, borderBottomColor:'#aaa'}}>
                     <Text style={{color:'#999', textAlign: 'center', fontSize:10, marginBottom: 0}}>ESCANEADO</Text>

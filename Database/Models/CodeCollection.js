@@ -24,11 +24,17 @@ export default class CodeCollection {
 
         let totalValidated = 0;
         const codes = await codesResponse.json();
-        codes.forEach( async ( code ) => {
+        for( let i = 0; i < codes.length; i++ ) {
+            const code = codes[ i ];
+
             const codeDB = await this.findCode( code.code );
             if( codeDB !== null ) {
                 if( code.updated_at > codeDB.updated_at ) {
-                    this.updateCode( new Code(code) );
+                    if( code.validations ) {
+                        totalValidated++;
+                    }
+
+                    await this.updateCode( new Code(code) );
                 } else {
                     if( codeDB.validations ) {
                         totalValidated++;
@@ -36,13 +42,12 @@ export default class CodeCollection {
                 }
             } else {
                 if( code.validations ) {
-                    this.totalValidated++;
+                    totalValidated++;
                 }
 
-                this.addCode( code );                
+                await this.addCode( code );                
             }
-        });
-
+        }
         this.validated = totalValidated;
         this.lastUpdate = new Date();
     }

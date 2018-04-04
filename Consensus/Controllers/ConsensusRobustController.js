@@ -125,12 +125,22 @@ export default class ConsensusRobustController {
     }
     
     votationEnded( votation, type ) {
-        const transportTime = new Date().getTime() - new Date( votation.closed_at ).getTime();
+        const transportTime = Math.abs( new Date().getTime() - new Date( votation.closed_at ).getTime() );
         console.log( 'votation end' );
+        //console.log( votation );
         console.log( 'elapsed: ' + votation.elapsed );
         console.log( 'time to receive: ' + transportTime );
 
-        //TODO: check votation opened by this node
+        if( this.isOnline ) {
+            if( votation.openedBy === this.socketControllers[0].eventHandler.nodeId ) {
+                this.notifyVotationResult( votation, type );
+            }
+        } else {
+            this.notifyVotationResult( votation, type );
+        }
+    }
+
+    notifyVotationResult( votation, type ) {
         if( votation.consensus.id === undefined ) {
             this.lastScanHandler({
                 verification: votation.verification,
@@ -140,6 +150,10 @@ export default class ConsensusRobustController {
                 message: 'El código no existe.'
             });
         } else {
+            if( votation.consensus.validations === 1 ) {
+                this.validated++;
+            }
+
             this.lastScanHandler({
                 verification: votation.verification,
                 code: votation.consensus.code,

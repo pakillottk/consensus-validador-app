@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { TextInput, Keyboard } from 'react-native'
+import { TextInput } from 'react-native'
 
 export default class EmbedScanner extends React.Component {
     constructor( props ) {

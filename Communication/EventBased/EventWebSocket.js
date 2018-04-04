@@ -16,7 +16,6 @@ export default class EventWebSocket extends EventBased {
             this.emit( 'join', { room: this.channel, voter: true } )
             
             if( this.onConnect ) {
-                console.log( 'callbackeo' )
                 this.onConnect()
             }
         });
