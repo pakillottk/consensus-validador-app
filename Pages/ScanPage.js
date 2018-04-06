@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button, View, Text, KeyboardAvoidingView } from 'react-native'
+import { Actions } from 'react-native-router-flux'
 
 import ConsensusRobustController from '../Consensus/Controllers/ConsensusRobustController'
 import CameraScanner from '../Components/CameraScanner/CameraScanner'
@@ -18,7 +19,8 @@ export default class ScanPage extends React.Component {
             openCamera: false,
             scanMode: 'E',
             totalCodes: 0,
-            scanned: 0
+            scanned: 0,
+            connectionStatus: true
         }
     } 
 
@@ -28,6 +30,7 @@ export default class ScanPage extends React.Component {
         if( typesResponse.ok ) {
             const types = await typesResponse.json();
             const controller = new ConsensusRobustController( this.receiveLastScan.bind( this ) );
+            controller.connectionStatusListener = this.updateConnectionStatus.bind( this );
             await controller.initialize( session, types );
 
             this.setState({ controller, scanned: controller.validated, totalCodes: controller.codeCount });
@@ -45,6 +48,10 @@ export default class ScanPage extends React.Component {
         };
     }
     
+    updateConnectionStatus( value ) {
+        this.setState({connectionStatus: value});
+    }
+
     openCamera( value ) {
         this.setState({openCamera: value})
     }
@@ -124,12 +131,17 @@ export default class ScanPage extends React.Component {
                     <Text style={{color:'#666', textAlign: 'center', fontSize:10, marginBottom: 0}}>ESCANEANDO COMO</Text>
                     <Text style={{color:'#999', textAlign: 'center', fontSize:25, marginTop: 0}}>{API.me.username}</Text>
                 </View>
+                <View style={{backgroundColor: this.state.connectionStatus ? 'green' : 'red'}}>
+                    <Text style={{textAlign: 'center', fontSize: 20, color: 'white'}}>
+                        {this.state.connectionStatus ? 'CONECTADO' : 'SIN CONEXIÓN'}
+                    </Text>
+                </View>
                 <View style={{backgroundColor:'#ddd', borderBottomWidth: 0.5, borderBottomColor:'#ccc'}}>
                     <Text style={{color:'#555', fontSize: 30, textAlign: 'center'}}>{session.name}</Text>
                     <Text style={{color:'#999', fontSize: 10, textAlign: 'center'}}>{session.location}</Text>
                     <Text style={{color:'#999', fontSize: 10, textAlign: 'center'}}>{session.recint}</Text>
                     <Text style={{color:'#999', fontSize: 10, textAlign: 'center'}}>{moment(session.date).locale('es').format( 'dddd DD MMMM YYYY HH:mm' )}</Text>
-                </View>
+                </View>                
                 <View style={{backgroundColor:'#666'}}>
                     <Text 
                         style={{
@@ -154,15 +166,24 @@ export default class ScanPage extends React.Component {
                     <Text style={{color:'#999', textAlign: 'center', fontSize:10, marginBottom: 0}}>ESCANEADO</Text>
                     <Text style={{color:'#666', textAlign: 'center', fontSize:25, marginBottom: 0}}>{this.state.scanned}/{this.state.totalCodes}</Text>
                 </View>
-                <Button onPress={() => this.openCamera( true )} title="CÁMARA"/>
+                <Button color="#aaa" onPress={() => this.openCamera( true )} title="LEER CON CÁMARA"/>
                 <View> 
                     <Text style={{textAlign:'center'}}> LECTURA </Text>
                     <EmbedScanner onLecture={( code ) => this.codeReceived( code ) }/>
                 </View>
+                <Button 
+                    title="LISTADO" 
+                    color="#666" 
+                    onPress={() => {
+                        Actions.push( 'codelist', {
+                            collections: this.state.controller.getCollections()
+                        })
+                    }}
+                />
                 {this.state.lastScanData === null && <View style={{backgroundColor:'#aaa'}}>
                     <Text style={{color:'#777', fontSize: 45, textAlign: 'center'}}>LISTO PARA ESCANEAR</Text>
                 </View>}
-                {this.state.lastScanData !== null && this.renderLastScan()} 
+                {this.state.lastScanData !== null && this.renderLastScan()}                 
             </KeyboardAvoidingView>
         )
     }

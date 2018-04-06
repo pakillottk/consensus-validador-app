@@ -10,6 +10,7 @@ import Code from '../../Database/Models/Code/Code';
 export default class ConsensusRobustController {
     constructor( lastScanHandler ) {
         this.lastScanHandler = lastScanHandler;
+        this.connectionStatusListener = null;
 
         this.collections = [];
         this.socketControllers = [];
@@ -77,6 +78,15 @@ export default class ConsensusRobustController {
         });
     }
 
+    getCollections() {
+        const collections = [];
+        this.localControllers.forEach( controller => {
+            collections.push( controller.codeCollection );
+        });
+
+        return collections;
+    }
+
     async codeScanned( code, mode ) {
         //console.log( 'to vote: ' + code )
         let notFoundIn = 0;
@@ -84,7 +94,8 @@ export default class ConsensusRobustController {
         if( this.isOnline ) {
             for(let i = 0; i < this.socketControllers.length; i++) {
                 const controller = this.socketControllers[ i ];
-                if( await controller.codeCollection.codeExists( code ) ){
+                if( await controller.codeCollection.codeExists( code ) ) {
+                    console.log( 'vote in: ' + controller.eventHandler.channel );
                     controller.codeScanned( code, mode );
                     break;
                 } else {
@@ -99,7 +110,7 @@ export default class ConsensusRobustController {
         } else { 
             for(let i = 0; i < this.localControllers.length; i++) {
                 const controller = this.localControllers[ i ];
-                if( await controller.codeCollection.codeExists( code ) ){
+                if( await controller.codeCollection.codeExists( code ) ){                    
                     controller.codeScanned( code, mode );
                     break;
                 } else {
@@ -117,14 +128,31 @@ export default class ConsensusRobustController {
     socketConnected() {
         console.log( 'connection okey' );
         this.isOnline = true;
+        if( this.connectionStatusListener ) {
+            this.connectionStatusListener( true );
+        }
     }
 
     socketDisconnected() {
         console.log( 'lost connection' );
         this.isOnline = false; 
+        if( this.connectionStatusListener ) {
+            this.connectionStatusListener( false );
+        }
+    }
+
+    wasOpenedByMe( votation ) {
+        for( let i = 0; i < this.socketControllers.length; i++ ) {
+            if( votation.openedBy === this.socketControllers[i].eventHandler.nodeId ) {
+                return true;
+            }
+        }
+
+        return false;
     }
     
     votationEnded( votation, type ) {
+        console.log( votation );
         const transportTime = Math.abs( new Date().getTime() - new Date( votation.closed_at ).getTime() );
         console.log( 'votation end' );
         //console.log( votation );
@@ -132,7 +160,7 @@ export default class ConsensusRobustController {
         console.log( 'time to receive: ' + transportTime );
 
         if( this.isOnline ) {
-            if( votation.openedBy === this.socketControllers[0].eventHandler.nodeId ) {
+            if( this.wasOpenedByMe( votation ) ) {
                 this.notifyVotationResult( votation, type );
             }
         } else {
@@ -150,7 +178,7 @@ export default class ConsensusRobustController {
                 message: 'El código no existe.'
             });
         } else {
-            if( votation.consensus.validations === 1 ) {
+            if( votation.consensus.validations === 1 && votation.verification !== 'not_valid' ) {
                 this.validated++;
             }
 

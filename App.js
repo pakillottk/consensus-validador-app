@@ -4,6 +4,7 @@ import { Router, Scene } from 'react-native-router-flux';
 import LoginPage from './Pages/LoginPage';
 import SessionsPage from './Pages/SessionsPage';
 import ScanPage from './Pages/ScanPage';
+import CodeListPage from './Pages/CodeListPage';
 
 //import EventWebSocket from './Communication/EventBased/EventWebSocket';
 //import CodeCollection from './Database/Models/CodeCollection';
@@ -19,6 +20,7 @@ export default class App extends React.Component {
           <Scene key="login" component={LoginPage} title="Login" initial={true} />
           <Scene key="sessions" component={SessionsPage} title="Sesiones" />
           <Scene key="scan" component={ScanPage} title="Escáner" />
+          <Scene key="codelist" component={CodeListPage} title="Listado" />
         </Scene>
       </Router>
     );

@@ -90,6 +90,18 @@ export default class CodeCollection {
         });
     }
 
+    getCodes( query ) {
+        return new Promise( ( resolve, reject ) => {
+            this.db.find( query )
+            .then( codes => {
+                resolve( codes )
+            })
+            .catch( error => {
+                reject( error )
+            })
+        });
+    }
+
     codeExists( code ) {
         return new Promise( ( resolve, reject ) => {
             this.findCode( code )
