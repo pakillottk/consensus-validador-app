@@ -14,6 +14,7 @@ export default class ScanPage extends React.Component {
         super( props )
 
         this.state = {
+            fordibben: false,
             controller: null,
             lastScanData: null,
             openCamera: false,
@@ -29,6 +30,10 @@ export default class ScanPage extends React.Component {
         const typesResponse = await API.get( 'types?session=' + session.id );
         if( typesResponse.ok ) {
             const types = await typesResponse.json();
+            if( types.length === 0 ) {
+                this.setState({fordibben: true});
+                return;
+            }
             const controller = new ConsensusRobustController( this.receiveLastScan.bind( this ) );
             controller.connectionStatusListener = this.updateConnectionStatus.bind( this );
             await controller.initialize( session, types );
@@ -112,6 +117,13 @@ export default class ScanPage extends React.Component {
 
     render() {
         const { session } = this.props
+        if( this.state.fordibben ) {
+            return(
+                <View style={{backgroundColor:'darkred', flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                    <Text style={{textAlign: 'center', fontSize:30, color:'white'}}>NO TIENE PERMISOS PARA ESCANEAR ESTE EVENTO.</Text>
+                </View>
+            );
+        }
         if( !this.state.controller ) {
             <Text>CARGANDO...</Text>
         }

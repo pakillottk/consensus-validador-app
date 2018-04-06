@@ -31,9 +31,20 @@ export default class SessionsPage extends React.Component {
         Actions.push( 'scan', {session} )
     }
 
+    renderHeader() {
+        return(
+            <Button 
+                color="#aaa" 
+                title="ACTUALIZAR"
+                onPress={() => this.fetchSessions()}
+            />
+        )
+    }
+
     render() {
         return(
             <FlatList
+                ListHeaderComponent={this.renderHeader()}
                 data={this.state.sessions}
                 keyExtractor={ ( session, index ) => session.id }
                 renderItem={
