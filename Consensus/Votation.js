@@ -1,6 +1,7 @@
 export default class Votation {
-    constructor( nodeId, code, scanMode, openedAt, solver ) {
+    constructor( nodeId, openerId, code, scanMode, openedAt, solver ) {
         this.openedBy   = nodeId;
+        this.openerId   = openerId;
         this.code       = code;
         this.scanMode   = scanMode;
         this.openedAt   = openedAt;
@@ -25,6 +26,7 @@ export default class Votation {
     getAsPlainObject() {
         return {
             openedBy: this.openedBy,
+            openerId: this.openerId,
             openedAt: this.openedAt,
             scanMode: this.scanMode,
             code: this.code,

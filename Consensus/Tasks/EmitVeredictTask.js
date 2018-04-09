@@ -23,7 +23,6 @@ export default class EmitVeredictTask extends TaskOneShot {
                             proposal: veredict.verification === 'valid' ? marked.getAsPlainObject() : codeObj.getAsPlainObject()
                         });
                     }
-                                        
                     resolve();
                 })
                 .catch( error =>  { reject( error ) } );

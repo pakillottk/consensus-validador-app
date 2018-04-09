@@ -4,6 +4,7 @@ import CloseVotationTask from '../Tasks/CloseVotationTask';
 
 import Votation from '../Votation';
 import Code from '../../Database/Models/Code/Code';
+import API from '../../Communication/API/API';
 
 export default class ConsensusController {
     constructor( codeCollection, onVotationClosed ) {
@@ -13,7 +14,7 @@ export default class ConsensusController {
     }
 
     codeScanned( code, scanMode ) {
-        this.openVotation( new Votation( null, code, scanMode, new Date() ) );
+        this.openVotation( new Votation( null, API.me.id, code, scanMode, new Date() ) );
     }
 
     startTask() {

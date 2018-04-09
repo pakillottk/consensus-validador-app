@@ -12,7 +12,7 @@ export default class ConsensusEventBasedController extends ConsensusController {
 
     bindEvents() {
         this.eventHandler.bind( 'votation_opened', ( data ) => {
-            //console.log( 'received_votation' );
+            console.log( 'received_votation' );
             //console.log( data );
             if( data.room !== this.eventHandler.channel ) {
                 console.log( 'out' );
@@ -20,9 +20,11 @@ export default class ConsensusEventBasedController extends ConsensusController {
             }
             const votation = new Votation( 
                 data.votation.openedBy, 
+                data.votation.openerId,
                 data.votation.code, 
                 data.votation.scanMode, 
-                data.votation.openedAt, new SocketVotationSolver(this.eventHandler) 
+                data.votation.openedAt, 
+                new SocketVotationSolver(this.eventHandler) 
             );
             this.votationOpened( votation )
         });
