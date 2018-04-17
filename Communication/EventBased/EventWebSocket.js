@@ -2,9 +2,9 @@ import EventBased from './EventBased';
 import io from 'socket.io-client';
 
 export default class EventWebSocket extends EventBased {
-    constructor( connection, channel, onConnect, onDisconnect ) {
+    constructor( connection, channel, onConnect, onDisconnect, isAVoter ) {
         const client = io( connection.getHostURL() );
-        super( client, onConnect, onDisconnect, channel );
+        super( client, onConnect, onDisconnect, channel, isAVoter );
     }
 
     disconnect() {
@@ -13,7 +13,7 @@ export default class EventWebSocket extends EventBased {
 
     attachConectionStatusEmitters() {
         this.client.on( 'connect', () => {
-            this.emit( 'join', { room: this.channel, voter: true } )
+            this.emit( 'join', { room: this.channel, voter: this.isAVoter ? true : false } )
             
             if( this.onConnect ) {
                 this.onConnect()

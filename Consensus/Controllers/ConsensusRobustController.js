@@ -43,7 +43,8 @@ export default class ConsensusRobustController {
                     API.connection, 
                     session.id + '-' + session.name + '-' + type.id + '-' + type.type,
                     () => this.socketConnected(),
-                    () => this.socketDisconnected()  
+                    () => this.socketDisconnected(),
+                    true
                 ),
                 collection,
                 this.votationEnded.bind( this )

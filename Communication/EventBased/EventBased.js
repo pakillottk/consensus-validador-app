@@ -1,10 +1,11 @@
 export default class EventBased {
     // @client - the client of the system (websocket, pusher...)
-    constructor( client, onConnect, onDisconnect, channel ) {
+    constructor( client, onConnect, onDisconnect, channel, isAVoter ) {
         this.client = client;
         this.onConnect = onConnect;
         this.onDisconnect = onDisconnect;
         this.channel = channel;        
+        this.isAVoter = isAVoter;
 
         this.attachConectionStatusEmitters();
     }

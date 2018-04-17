@@ -83,7 +83,7 @@ export default class ScanPage extends React.Component {
         console.log( 'received last scan' );
         this.setState({ lastScanData: data, scanned: this.state.controller.validated });
     }
-
+    
     renderLastScan() {
         const scanData = this.state.lastScanData;
 
@@ -195,7 +195,16 @@ export default class ScanPage extends React.Component {
                 {this.state.lastScanData === null && <View style={{backgroundColor:'#aaa'}}>
                     <Text style={{color:'#777', fontSize: 45, textAlign: 'center'}}>LISTO PARA ESCANEAR</Text>
                 </View>}
-                {this.state.lastScanData !== null && this.renderLastScan()}                 
+                {this.state.lastScanData !== null && this.renderLastScan()}   
+                <Button 
+                    title="VER HISTORIA" 
+                    color="#666" 
+                    onPress={() => {
+                        Actions.push( 'history', {
+                            session: session
+                        })
+                    }}
+                />           
             </KeyboardAvoidingView>
         )
     }
