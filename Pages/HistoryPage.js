@@ -169,19 +169,19 @@ export default class HistoryPage extends React.Component {
                         const entry = item.item
                         const colors = this.getLevelColors( entry.level )
                         return(
-                            <View>
-                                <View style={{backgroundColor: colors.header}}>
-                                    <Text style={{textAlign:'center', fontSize: 7, color: 'white'}}>{ this.translateEntryLevel( entry.level )}</Text>
-                                </View>
+                            <View style={{padding:5, backgroundColor:'#444'}}>
                                 <View style={{backgroundColor:'#666'}}>
                                     <Text style={{textAlign: 'center', fontSize: 10, color:'#ddd'}}>{entry.user ? entry.user.username : ''}</Text>
-                                </View>
-                                <View style={{backgroundColor: '#fff', borderBottomWidth: 0.5, borderBottomColor: '#ccc'}}>
-                                    <Text style={{textAlign:'center', fontSize: 15, fontWeight: 'bold', color: colors.header}}>{entry.msg}</Text>
                                 </View>
                                 <View style={{backgroundColor:'#ddd'}}>
                                     <Text style={{textAlign:'center', fontSize: 10, color: '#999'}}>{moment(entry.date).format( 'HH:mm:ss DD/MM/YYYY' )}</Text>
                                 </View>
+                                <View style={{backgroundColor: colors.header}}>
+                                    <Text style={{textAlign:'center', fontSize: 7, color: 'white'}}>{ this.translateEntryLevel( entry.level )}</Text>
+                                </View>                                
+                                <View style={{backgroundColor: '#fff', borderBottomWidth: 0.5, borderBottomColor: '#ccc'}}>
+                                    <Text style={{textAlign:'center', fontSize: 15, fontWeight: 'bold', color: colors.header}}>{entry.msg}</Text>
+                                </View>                                
                             </View>
                         )
                     }}
