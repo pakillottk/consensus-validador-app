@@ -3,7 +3,6 @@ import React from 'react';
 import { Alert, View, Text, TextInput, StyleSheet, Button, Picker } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 
-import Connection from '../Communication/Connection';
 import API from '../Communication/API/API';
 import config from '../env'
 
@@ -12,9 +11,6 @@ export default class LoginPage extends React.Component {
         super( props )
 
         this.state = {
-            protocol: 'http',
-            host: '192.168.1.12',
-            port: '3005',
             username: 'scanner',
             password: 'scanner',
             connectDisabled: false,
@@ -31,7 +27,6 @@ export default class LoginPage extends React.Component {
     async login() {
         this.connectButtonDisabled( true )
 
-        API.updateConnection( new Connection( this.state.protocol, this.state.host, this.state.port, API.basePath ) );
         try {
             await API.attemptLogin({
                 username: this.state.username,
@@ -51,10 +46,10 @@ export default class LoginPage extends React.Component {
                     {text: 'ACEPTAR', onPress: () => {}},
                 ],
                 { cancelable: true }
-            )
-        }
-
-        this.connectButtonDisabled( false )
+            )            
+        }   
+        
+        this.connectButtonDisabled( false )     
     }
 
     connectButtonDisabled( value ) {
@@ -62,29 +57,17 @@ export default class LoginPage extends React.Component {
     }
 
     goToSessions() {
-        Actions.popAndPush( 'sessions' );
+        Actions.push( 'sessions' );
     }
 
     render() {
         return(
             <View style={{backgroundColor:'#ccc'}}>
                 <View style={{backgroundColor:'#aaa'}}>
-                    <Text style={{color: '#eee', textAlign: 'center', fontSize: 30}}>CONEXIÓN</Text>
+                    <Text style={{color: '#eee', textAlign: 'center', fontSize: 30}}>INICIAR SESIÓN</Text>
                 </View>
                 <View style={{backgroundColor:'#eee'}}>
-                    <Text style={{color: '#333', textAlign: 'center'}}>PROTOCOLO</Text>
-                    <Picker
-                        selectedValue={this.state.protocol}
-                        onValueChange={( value, index ) => this.handleFieldChange('protocol', value)}
-                    >
-                        <Picker.Item label="HTTP" value="http" />
-                        <Picker.Item label="HTTPS" value="https" />
-                    </Picker>
-                    <Text style={{color: '#333', textAlign: 'center'}}>HOST</Text>
-                    <TextInput style={{textAlign: 'center'}} onChangeText={(text) => this.handleFieldChange('host', text)} value={this.state.host}/>
-                    <Text style={{color: '#333', textAlign: 'center'}}>PUERTO</Text>
-                    <TextInput style={{textAlign: 'center'}} keyboardType="numeric" onChangeText={(text) => this.handleFieldChange('port', text)} value={this.state.port}/>
-                    <Text style={{color: '#333', textAlign: 'center'}}>USUARIO</Text>
+                   <Text style={{color: '#333', textAlign: 'center'}}>USUARIO</Text>
                     <TextInput style={{textAlign: 'center'}} onChangeText={(text) => this.handleFieldChange('username', text)} value={this.state.username} />
                     <Text style={{color: '#333', textAlign: 'center'}}>CONTRASEÑA</Text>
                     <TextInput style={{textAlign: 'center'}} secureTextEntry={true} onChangeText={(text) => this.handleFieldChange('password', text)} value={this.state.password}/>
