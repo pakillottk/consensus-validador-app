@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, FlatList, StyleSheet, View, Text } from 'react-native';
+import { Button, FlatList, StyleSheet, ScrollView, View, Text } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 
 import API from '../Communication/API/API';
@@ -43,31 +43,33 @@ export default class SessionsPage extends React.Component {
 
     render() {
         return(
-            <FlatList
-                ListHeaderComponent={this.renderHeader()}
-                data={this.state.sessions}
-                keyExtractor={ ( session, index ) => session.id }
-                renderItem={
-                    ( item ) => {
-                        const session = item.item;
-                        return(
-                            <View style={styles.container}>
-                                <Text style={styles.nameText}>
-                                    {session.name}
-                                </Text>                                
-                                <Text style={styles.otherText}>{moment(session.date).locale('es').format('dddd DD MMMM YYYY HH:mm').toUpperCase()}</Text>
-                                <Text style={styles.otherText}> {session.location} </Text>
-                                <Text style={styles.otherText}> {session.recint} </Text>
-                                <Button 
-                                    color="#999"
-                                    onPress={() => this.startSession( session )}
-                                    title="ESCANEAR"
-                                />
-                            </View>
-                        );
+            <ScrollView>
+                <FlatList
+                    ListHeaderComponent={this.renderHeader()}
+                    data={this.state.sessions}
+                    keyExtractor={ ( session, index ) => session.id }
+                    renderItem={
+                        ( item ) => {
+                            const session = item.item;
+                            return(
+                                <View style={styles.container}>
+                                    <Text style={styles.nameText}>
+                                        {session.name}
+                                    </Text>                                
+                                    <Text style={styles.otherText}>{moment(session.date).locale('es').format('dddd DD MMMM YYYY HH:mm').toUpperCase()}</Text>
+                                    <Text style={styles.otherText}> {session.location} </Text>
+                                    <Text style={styles.otherText}> {session.recint} </Text>
+                                    <Button 
+                                        color="#999"
+                                        onPress={() => this.startSession( session )}
+                                        title="ESCANEAR"
+                                    />
+                                </View>
+                            );
+                        }
                     }
-                }
-            />
+                />
+            </ScrollView>
         );
     }
 }
