@@ -12,13 +12,13 @@ export default class App extends React.Component {
   render() {    
     return (
       <Router>
-        <Scene key="root">
-          <Scene key="connection" component={ConnectionPage} title="Conexión" initial={true} />
-          <Scene key="login" component={LoginPage} title="Login" />
-          <Scene key="sessions" component={SessionsPage} title="Sesiones" />
-          <Scene key="scan" component={ScanPage} title="Escáner" />
-          <Scene key="codelist" component={CodeListPage} title="Listado" />
-          <Scene key="history" component={HistoryPage} title="Historia" />
+        <Scene key="root" navigationBarStyle={{backgroundColor:'#666'}} titleStyle={{color:'#ddd'}}>
+          <Scene key="connection" component={ConnectionPage} title="CONECTAR" initial={true} />
+          <Scene key="login" component={LoginPage} title="LOGIN" />
+          <Scene key="sessions" component={SessionsPage} title="SESIONES" />
+          <Scene key="scan" component={ScanPage} title="ESCÁNER" />
+          <Scene key="codelist" component={CodeListPage} title="LISTADO" />
+          <Scene key="history" component={HistoryPage} title="HISTORIA" />
         </Scene>
       </Router>
     );
