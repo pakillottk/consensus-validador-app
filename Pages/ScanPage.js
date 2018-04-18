@@ -36,6 +36,9 @@ export default class ScanPage extends React.Component {
             }
             const controller = new ConsensusRobustController( this.receiveLastScan.bind( this ) );
             controller.connectionStatusListener = this.updateConnectionStatus.bind( this );
+            controller.codeAddedListener = ( totalCodes ) => {
+                this.setState({totalCodes: totalCodes});
+            }
             await controller.initialize( session, types );
 
             this.setState({ controller, scanned: controller.validated, totalCodes: controller.codeCount });

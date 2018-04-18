@@ -10,6 +10,7 @@ import Code from '../../Database/Models/Code/Code';
 export default class ConsensusRobustController {
     constructor( lastScanHandler ) {
         this.lastScanHandler = lastScanHandler;
+        this.codeAddedListener = null;
         this.connectionStatusListener = null;
 
         this.collections = [];
@@ -29,7 +30,12 @@ export default class ConsensusRobustController {
 
         for( let i = 0; i < types.length; i++ ) {
             const type = types[ i ]
-            const collection = new CodeColection( session, type );
+            const collection = new CodeColection( session, type, ( newCode ) => { 
+                this.codeCount++; 
+                if( this.codeAddedListener ) {
+                    this.codeAddedListener( this.codeCount );
+                }
+            });
             await collection.syncCollection();
             totalCodes += await collection.getCodeCount();
             totalValidated += collection.validated;

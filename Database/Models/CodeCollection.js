@@ -3,15 +3,41 @@ import Code from './Code/Code';
 import CodeRoutes from './Code/Routes';
 
 import API from '../../Communication/API/API';
+import EventWebSocket from '../../Communication/EventBased/EventWebSocket'
 
-//TODO: use websockets to allow realtime code insertion
 export default class CodeCollection {
-    constructor( session, type ) {
+    constructor( session, type, onCodeAdded ) {
         this.session = session;
         this.type = type;
+        this.onCodeAdded = onCodeAdded;
         this.filename = session.id + '_' + type.id + '_' + API.me.username;
         this.db = new DB( this.filename, false, true ); 
-        //TODO: get the lastUpdate from the DB.
+        
+        this.socket = new EventWebSocket(
+            API.connection,
+            session.id + '-session'
+        );
+        this.socket.bind( 'code_added', async ( data ) => {
+            if( parseInt(data.type_id) === parseInt(this.type.id) ) {
+                await this.addCode( data );
+                if( this.onCodeAdded ) {
+                    this.onCodeAdded( data );
+                }
+            }
+        });
+        this.socket.bind( 'code_updated', async ( data ) => {
+            if( data.type_id === this.type.id ) {
+                if( await this.codeExists( data.code ) ) {
+                    await this.updateCode( new Code(data) );
+                } else {
+                    await this.addCode( data );
+                    if( this.onCodeAdded ) {
+                        this.onCodeAdded( data );
+                    }
+                }
+            }
+        });
+
         this.lastUpdate = null;
         this.validated = 0;
     }
