@@ -51,6 +51,31 @@ export default class ApiConnection {
         }
     }
 
+    async attemptRefresh() {
+        const data = {
+            refresh_token: this.authTokens.refresh,
+            client_id: config.auth.client_id,
+            client_secret: config.auth.client_secret,
+            grant_type: 'refresh_token'
+        }
+
+        const response = await this.post( this.loginPath, data, true );
+        if( !response.ok ) {
+            throw new Error( 'TOKEN REFRESH FAILED' );
+        }
+
+        const tokens = await response.json();        
+        this.authTokens = {
+            type: tokens.token_type,
+            access: tokens.access_token,
+            refresh: tokens.refresh_token
+        };        
+        const meResponse = await this.get( config.auth.mePath );
+        if( meResponse.ok ) {
+            this.me = await meResponse.json();
+        }
+    }
+
     async get( path ) {
         const url = this.connection.getFullURL( path );
         const request = new Request( url, { method: 'GET', headers: { Authorization: this.getAuthHeader() } });
