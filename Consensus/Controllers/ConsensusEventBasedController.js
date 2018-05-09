@@ -23,7 +23,8 @@ export default class ConsensusEventBasedController extends ConsensusController {
                 data.votation.openerId,
                 data.votation.code, 
                 data.votation.scanMode, 
-                data.votation.openedAt, 
+                data.votation.openedAt,
+                data.votation.offline, 
                 new SocketVotationSolver(this.eventHandler) 
             );
             this.votationOpened( votation )

@@ -13,8 +13,8 @@ export default class ConsensusController {
         this.votingTask = new QueueTask();
     }
 
-    codeScanned( code, scanMode ) {
-        this.openVotation( new Votation( null, API.me.id, code, scanMode, new Date() ) );
+    codeScanned( code, scanMode, offline = false ) {
+        this.openVotation( new Votation( null, API.me.id, code, scanMode, new Date(), offline ) );
     }
 
     startTask() {

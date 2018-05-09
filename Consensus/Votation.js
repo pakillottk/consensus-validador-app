@@ -1,13 +1,14 @@
 export default class Votation {
-    constructor( nodeId, openerId, code, scanMode, openedAt, solver ) {
+    constructor( nodeId, openerId, code, scanMode, openedAt, offline, solver ) {
         this.openedBy   = nodeId;
         this.openerId   = openerId;
         this.code       = code;
         this.scanMode   = scanMode;
         this.openedAt   = openedAt;
         this.consensus  = null; //The resulting code state
+        this.offline    = offline; //true if the code was scanned offline by the opener
 
-        this.solver     = solver; //TODO: attach as default solver the remote API solver
+        this.solver     = solver;
     }
 
     vote( veredict ) {
@@ -30,7 +31,8 @@ export default class Votation {
             openedAt: this.openedAt,
             scanMode: this.scanMode,
             code: this.code,
-            consensus: this.consensus
+            consensus: this.consensus,
+            offline: this.offline
         }
     }
 }

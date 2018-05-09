@@ -17,6 +17,8 @@ export default class ConsensusRobustController {
         this.socketControllers = [];
         this.localControllers = [];
 
+        this.scannedOffline = [];
+
         this.codeCount = 0;
         this.validated = 0;
 
@@ -96,39 +98,56 @@ export default class ConsensusRobustController {
 
     async codeScanned( code, mode ) {
         //console.log( 'to vote: ' + code )
-        let notFoundIn = 0;
-
         if( this.isOnline ) {
-            for(let i = 0; i < this.socketControllers.length; i++) {
-                const controller = this.socketControllers[ i ];
-                if( await controller.codeCollection.codeExists( code ) ) {
-                    console.log( 'vote in: ' + controller.eventHandler.channel );
-                    controller.codeScanned( code, mode );
-                    break;
-                } else {
-                    notFoundIn++;
-                }
-            }
-
-            if( notFoundIn === this.socketControllers.length ) {
-                console.log( 'code not found' );
-                this.socketControllers[ 0 ].codeScanned( code, mode );
-            }
+            await this.openSocketVotation( code, mode );
         } else { 
-            for(let i = 0; i < this.localControllers.length; i++) {
-                const controller = this.localControllers[ i ];
-                if( await controller.codeCollection.codeExists( code ) ){                    
-                    controller.codeScanned( code, mode );
-                    break;
-                } else {
-                    notFoundIn++;
-                }
-            }
+            await this.openLocalVotation( code, mode );
+        }
+    }
 
-            if( notFoundIn === this.localControllers.length ) {
-                console.log( 'code not found' );
-                this.localControllers[ 0 ].codeScanned( code, mode );
+    async openSocketVotation( code, mode, isOffline = false ) {
+        let notFoundIn = 0;
+        for(let i = 0; i < this.socketControllers.length; i++) {
+            const controller = this.socketControllers[ i ];
+            if( await controller.codeCollection.codeExists( code ) ) {
+                console.log( 'vote in: ' + controller.eventHandler.channel );
+                controller.codeScanned( code, mode, isOffline );
+                break;
+            } else {
+                notFoundIn++;
             }
+        }
+
+        if( notFoundIn === this.socketControllers.length ) {
+            console.log( 'code not found' );
+            this.socketControllers[ 0 ].codeScanned( code, mode, isOffline );
+        }
+    }
+
+    async openLocalVotation( code, mode ) {
+        let notFoundIn = 0;
+        for(let i = 0; i < this.localControllers.length; i++) {
+            const controller = this.localControllers[ i ];
+            if( await controller.codeCollection.codeExists( code ) ){                    
+                controller.codeScanned( code, mode );
+                break;
+            } else {
+                notFoundIn++;
+            }
+        }
+
+        if( notFoundIn === this.localControllers.length ) {
+            console.log( 'code not found' );
+            this.localControllers[ 0 ].codeScanned( code, mode );
+        }
+
+        this.scannedOffline.push( {code, mode} );
+    }
+
+    async openVotationForOfflineScanned() {
+        while( this.scannedOffline.length > 0 ) {
+            const toVote = this.scannedOffline.shift();
+            this.openSocketVotation( toVote.code, toVote.mode, true );
         }
     }
 
@@ -138,6 +157,8 @@ export default class ConsensusRobustController {
         if( this.connectionStatusListener ) {
             this.connectionStatusListener( true );
         }
+
+        this.openVotationForOfflineScanned();
     }
 
     socketDisconnected() {
@@ -167,7 +188,7 @@ export default class ConsensusRobustController {
         console.log( 'time to receive: ' + transportTime );
 
         if( this.isOnline ) {
-            if( this.wasOpenedByMe( votation ) ) {
+            if( this.wasOpenedByMe( votation ) && !votation.offline ) {
                 this.notifyVotationResult( votation, type );
             }
         } else {
