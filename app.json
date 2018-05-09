@@ -1,5 +1,15 @@
 {
   "expo": {
-    "sdkVersion": "25.0.0"
+    "name": "Consensus validator scanner APP",
+    "sdkVersion": "25.0.0",
+    "icon": "./app-icon.png",
+    "version":"0.1.0",
+    "slug":"consensus-validator-app",
+    "ios": {
+      "bundleIdentifier": "com.cdem.consensusvalidatorapp"
+    },
+    "android": {
+      "package": "com.cdem.consensusvalidatorapp"
+    }
   }
 }
