@@ -163,46 +163,19 @@ export default class ScanPage extends React.Component {
 
         return(
             <KeyboardAvoidingView>
-                <View style={{backgroundColor:'#333'}}>
-                    <Text style={{color:'#666', textAlign: 'center', fontSize:10, marginBottom: 0}}>ESCANEANDO COMO</Text>
-                    <Text style={{color:'#999', textAlign: 'center', fontSize:25, marginTop: 0}}>{API.me.username}</Text>
-                </View>
                 <View style={{backgroundColor: this.state.connectionStatus ? 'green' : 'red'}}>
                     <Text style={{textAlign: 'center', fontSize: 20, color: 'white'}}>
                         {this.state.connectionStatus ? 'CONECTADO' : 'SIN CONEXIÓN'}
                     </Text>
                 </View>
+                <View style={{backgroundColor:'#333'}}>
+                   <Text style={{color:'#999', textAlign: 'center', fontSize:10, marginTop: 0}}>{API.me.username}</Text>
+                </View>   
                 <View style={{backgroundColor:'#ddd', borderBottomWidth: 0.5, borderBottomColor:'#ccc'}}>
-                    <Text style={{color:'#555', fontSize: 30, textAlign: 'center'}}>{session.name}</Text>
-                    <Text style={{color:'#999', fontSize: 10, textAlign: 'center'}}>{session.location}</Text>
-                    <Text style={{color:'#999', fontSize: 10, textAlign: 'center'}}>{session.recint}</Text>
-                    <Text style={{color:'#999', fontSize: 10, textAlign: 'center'}}>{moment(session.date).locale('es').format( 'dddd DD MMMM YYYY HH:mm' )}</Text>
-                </View>                
-                <View style={{backgroundColor:'#666'}}>
-                    <Text 
-                        style={{
-                            textAlign:'center', 
-                            color:'#ccc', 
-                            fontSize: 18
-                        }}
-                    >
-                        MODO ESCANEO: 
-                        <Text 
-                            style={{
-                                color: this.state.scanMode === 'E' ? 'lightgreen':'red',
-                                fontSize: 20
-                            }}
-                        >
-                            { this.state.scanMode === 'E' ? ' ENTRADA':' SALIDA' } 
-                        </Text>
+                    <Text style={{color:'#555', fontSize: 12, textAlign: 'center'}}>
+                        {session.name} ({session.location}) {moment(session.date).locale('es').format( 'DD/MM/YYYY HH:mm' )}
                     </Text>
-                    <Button color="darkgreen" onPress={() => this.swithScanMode()} title="CAMBIAR E/S"/>
-                </View>
-                <View style={{backgroundColor:'#eee', borderBottomWidth: 0.75, borderBottomColor:'#aaa'}}>
-                    <Text style={{color:'#999', textAlign: 'center', fontSize:10, marginBottom: 0}}>ESCANEADO</Text>
-                    <Text style={{color:'#666', textAlign: 'center', fontSize:25, marginBottom: 0}}>{this.state.scanned}/{this.state.totalCodes}</Text>
-                </View>
-                <Button color="#aaa" onPress={() => this.openCamera( true )} title="LEER CON CÁMARA"/>
+                </View>                 
                 <View> 
                     <Text style={{textAlign:'center'}}> LECTURA </Text>
                     <EmbedScanner onLecture={( code ) => this.codeReceived( code ) }/>
@@ -228,7 +201,32 @@ export default class ScanPage extends React.Component {
                             session: session
                         })
                     }}
-                />           
+                />       
+                <Button color="#aaa" onPress={() => this.openCamera( true )} title="LEER CON CÁMARA"/> 
+                <View style={{backgroundColor:'#eee', borderBottomWidth: 0.75, borderBottomColor:'#aaa'}}>
+                    <Text style={{color:'#999', textAlign: 'center', fontSize:10, marginBottom: 0}}>ESCANEADO</Text>
+                    <Text style={{color:'#666', textAlign: 'center', fontSize:25, marginBottom: 0}}>{this.state.scanned}/{this.state.totalCodes}</Text>
+                </View>                            
+                <View style={{backgroundColor:'#666'}}>
+                    <Text 
+                        style={{
+                            textAlign:'center', 
+                            color:'#ccc', 
+                            fontSize: 18
+                        }}
+                    >
+                        MODO ESCANEO: 
+                        <Text 
+                            style={{
+                                color: this.state.scanMode === 'E' ? 'lightgreen':'red',
+                                fontSize: 20
+                            }}
+                        >
+                            { this.state.scanMode === 'E' ? ' ENTRADA':' SALIDA' } 
+                        </Text>
+                    </Text>
+                    <Button color="darkgreen" onPress={() => this.swithScanMode()} title="CAMBIAR E/S"/>
+                </View>      
             </KeyboardAvoidingView>
         )
     }
