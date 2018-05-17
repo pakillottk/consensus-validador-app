@@ -13,8 +13,8 @@ export default class ConsensusController {
         this.votingTask = new QueueTask();
     }
 
-    codeScanned( code, scanMode, offline = false ) {
-        this.openVotation( new Votation( null, API.me.id, code, scanMode, new Date(), offline ) );
+    codeScanned( code, scanMode, offline = false, codeSearch = false ) {
+        this.openVotation( new Votation( null, API.me.id, code, scanMode, new Date(), offline, codeSearch ) );
     }
 
     startTask() {
@@ -31,7 +31,7 @@ export default class ConsensusController {
     }
 
     votationOpened( votation ) {
-        this.votingTask.addTask(  new EmitVeredictTask( this.codeCollection, votation ) );
+        this.votingTask.addTask( new EmitVeredictTask( this.codeCollection, votation ) );
     }
 
     votationClosed( votation ) {
@@ -49,7 +49,7 @@ export default class ConsensusController {
         //console.log( votation );
 
         if( this.onVotationClosed ) {
-            this.onVotationClosed( votation, this.codeCollection.type.type );
+            this.onVotationClosed( votation, this.codeCollection ? this.codeCollection.type.type : null );
         }
     }
 } 

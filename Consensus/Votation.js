@@ -1,5 +1,5 @@
 export default class Votation {
-    constructor( nodeId, openerId, code, scanMode, openedAt, offline, solver ) {
+    constructor( nodeId, openerId, code, scanMode, openedAt, offline, codeSearch, solver ) {
         this.openedBy   = nodeId;
         this.openerId   = openerId;
         this.code       = code;
@@ -7,7 +7,7 @@ export default class Votation {
         this.openedAt   = openedAt;
         this.consensus  = null; //The resulting code state
         this.offline    = offline; //true if the code was scanned offline by the opener
-
+        this.codeSearch = codeSearch; //true if we are looking for the code collection
         this.solver     = solver;
     }
 
@@ -32,7 +32,8 @@ export default class Votation {
             scanMode: this.scanMode,
             code: this.code,
             consensus: this.consensus,
-            offline: this.offline
+            offline: this.offline,
+            codeSearch: this.codeSearch
         }
     }
 }

@@ -41,7 +41,7 @@ export default class CodeCollection {
         this.lastUpdate = null;
         this.validated = 0;
     }
-
+    
     async syncCollection() {
         const codesResponse = await API.get( CodeRoutes.get + '?session=' + this.session.id + '&type_id='+this.type.id );
         if( !codesResponse.ok ) {

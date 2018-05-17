@@ -5,15 +5,13 @@ export default class TaskOneShot extends Task {
         super( undefined, onFinish );
     }
 
-    run() {
-       this.runHandler()
-        .then( () => {
+    async run() {
+        try {
+            await this.runHandler();
             this.finishAndSuccess();
-            this.finished = true;
-        })
-        .catch( ( error ) => {
-            this.finishAndFail();
-            this.finished = true;
-        });     
+        } catch( error ) {
+            this.finishAndFail();    
+        }
+        this.finished = true;    
     }
 }

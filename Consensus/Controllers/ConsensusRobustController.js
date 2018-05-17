@@ -1,7 +1,10 @@
 import CodeColection from '../../Database/Models/CodeCollection'
 import ConsensusLocalController from './ConsensusLocalController'
 import ConsensusEventBasedController from './ConsensusEventBasedController'
+import ConsensusCodeSearchController from './ConsensusCodeSearchController'
 import EventWebSocket from '../../Communication/EventBased/EventWebSocket'
+import Votation from '../Votation'
+import SocketVotationSolver from '../VotationSolvers/SocketVotationSolver';
 
 import API from '../../Communication/API/API'
 import Code from '../../Database/Models/Code/Code';
@@ -16,6 +19,7 @@ export default class ConsensusRobustController {
         this.collections = [];
         this.socketControllers = [];
         this.localControllers = [];
+        this.notFoundController = null;
 
         this.scannedOffline = [];
 
@@ -49,7 +53,7 @@ export default class ConsensusRobustController {
             const socketController = new ConsensusEventBasedController(
                 new EventWebSocket( 
                     API.connection, 
-                    session.id + '-' + session.name + '-' + type.id + '-' + type.type,
+                    session.id + '-' + session.name.replace( ' ', '_' ) + '-' + type.id + '-' + type.type.replace( ' ', '_' ),
                     () => this.socketConnected(),
                     () => this.socketDisconnected(),
                     true
@@ -72,6 +76,19 @@ export default class ConsensusRobustController {
             );
         };
 
+        this.notFoundController = new ConsensusCodeSearchController(
+            new EventWebSocket(
+                API.connection,
+                session.id + '-' + session.name.replace( ' ', '_' ) +'-UNKNOWN',
+                () => this.socketConnected(),
+                () => this.socketDisconnected(),
+                true
+            ),
+            this.collections,
+            this.votationEnded.bind( this )
+        );
+        this.notFoundController.startTask();
+
         this.codeCount = totalCodes;
         this.validated = totalValidated;
     }
@@ -81,6 +98,9 @@ export default class ConsensusRobustController {
             controller.stopTask();
             controller.eventHandler.disconnect();
         });
+
+        this.notFoundController.stopTask();
+        this.notFoundController.eventHandler.disconnect();
 
         this.localControllers.forEach( controller => {
             controller.stopTask();
@@ -120,7 +140,7 @@ export default class ConsensusRobustController {
 
         if( notFoundIn === this.socketControllers.length ) {
             console.log( 'code not found' );
-            this.socketControllers[ 0 ].codeScanned( code, mode, isOffline );
+            this.notFoundController.codeScanned( code, mode, isOffline, true );
         }
     }
 
@@ -170,6 +190,9 @@ export default class ConsensusRobustController {
     }
 
     wasOpenedByMe( votation ) {
+        if( votation.codeSearch && this.notFoundController.eventHandler.nodeId === votation.openedBy ) {
+            return true;
+        }
         for( let i = 0; i < this.socketControllers.length; i++ ) {
             if( votation.openedBy === this.socketControllers[i].eventHandler.nodeId ) {
                 return true;
@@ -185,10 +208,40 @@ export default class ConsensusRobustController {
         console.log( 'votation end' );
         //console.log( votation );
         console.log( 'elapsed: ' + votation.elapsed );
-        console.log( 'time to receive: ' + transportTime );
+        console.log( 'time to receive: ' + transportTime );        
 
         if( this.isOnline ) {
             if( this.wasOpenedByMe( votation ) && !votation.offline ) {
+                if( votation.codeSearch ) {
+                    //Code found, checks if the collection is allowed
+                    if( votation.verification === "valid" ) {
+                        for( let i = 0; i < this.socketControllers.length; i++ ) {
+                            const controller = this.socketControllers[ i ];
+                            const collection = controller.codeCollection;
+                            //Collection allowed
+                            if( collection.type.id+'-'+collection.type.type ===  votation.inCollection ) {
+                                //Open a votation
+                                controller.openVotation( new Votation(
+                                    data.votation.openedBy, 
+                                    API.me.id,
+                                    votation.codeFound.code, 
+                                    votation.scanMode, 
+                                    new Date(),
+                                    false, 
+                                    false,
+                                    new SocketVotationSolver(controller.eventHandler) 
+                                ));
+                                return;
+                            }
+                        }
+                        //Not allowed
+                        this.notifyVotationResult({
+                            ...votation, 
+                            consensus: {code: votation.codeFound.code }
+                        }, votation.inCollection.split('-')[1] );
+                        return;
+                    }
+                }
                 this.notifyVotationResult( votation, type );
             }
         } else {
@@ -203,7 +256,9 @@ export default class ConsensusRobustController {
                 code: votation.consensus.code,
                 name: '',
                 type: '',
-                message: 'El código no existe.'
+                message: votation.codeSearch ? 
+                        'El código no existe.' : 
+                        'Este escáner no está autorizado a leer: ' + type
             });
         } else {
             if( votation.consensus.validations === 1 && votation.verification !== 'not_valid' ) {
