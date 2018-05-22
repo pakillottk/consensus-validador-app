@@ -24,6 +24,7 @@ export default class EmitCodeSearchTask extends TaskOneShot {
                     verification:"valid",
                     message:"Code found",
                     scanMode: this.votation.scanMode,
+                    openedBy: this.votation.openedBy,
                     codeFound: codeObj.getAsPlainObject(),
                     inCollection: codeCollection.type.id+'-'+codeCollection.type.type
                 };

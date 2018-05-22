@@ -19,7 +19,7 @@ export default class ConsensusEventBasedController extends ConsensusController {
                 return;
             }
             const votation = new Votation( 
-                null, 
+                data.votation.openedBy, 
                 data.votation.openerId,
                 data.votation.code, 
                 data.votation.scanMode, 
@@ -33,6 +33,7 @@ export default class ConsensusEventBasedController extends ConsensusController {
         this.eventHandler.bind( 'votation_closed', ( data ) => {
             //console.log( veredict );
             console.log( 'votation closed ' + this.eventHandler.channel );
+            console.log( data.room );
             if( data.room === this.eventHandler.channel ) {
                 this.votationClosed( data.votation );
             }

@@ -212,7 +212,7 @@ export default class ConsensusRobustController {
 
         if( this.isOnline ) {
             if( this.wasOpenedByMe( votation ) && !votation.offline ) {
-                if( votation.codeSearch ) {
+                if( votation.codeSearch == true ) {
                     //Code found, checks if the collection is allowed
                     if( votation.verification === "valid" ) {
                         for( let i = 0; i < this.socketControllers.length; i++ ) {
@@ -251,15 +251,25 @@ export default class ConsensusRobustController {
 
     notifyVotationResult( votation, type ) {
         if( votation.consensus.id === undefined ) {
-            this.lastScanHandler({
-                verification: votation.verification,
-                code: votation.consensus.code,
-                name: '',
-                type: '',
-                message: votation.codeSearch ? 
-                        'El código no existe.' : 
-                        'Este escáner no está autorizado a leer: ' + type
-            });
+            if( votation.codeSearch ) {
+                this.lastScanHandler({
+                    verification: votation.verification,
+                    code: votation.consensus.code,
+                    name: '',
+                    type: '',
+                    message: 'El código no existe.'
+                });
+            } else {
+                this.lastScanHandler({
+                    verification: votation.verification,
+                    code: votation.consensus.code,
+                    name: '',
+                    type: '',
+                    message: votation.codeSearch ? 
+                            'El código no existe.' : 
+                            'Este escáner no está autorizado a leer: ' + type
+                });
+            }
         } else {
             if( votation.consensus.validations === 1 && votation.verification !== 'not_valid' ) {
                 this.validated++;

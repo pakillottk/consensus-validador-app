@@ -18,6 +18,7 @@ export default class EmitVeredictTask extends TaskOneShot {
             marked = codeObj.marked();
             this.votation.vote({
                 ...veredict, 
+                openedBy: this.votation.openedBy,
                 proposal: veredict.verification === 'valid' ? marked.getAsPlainObject() : codeObj.getAsPlainObject()
             });
         }
