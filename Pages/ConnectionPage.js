@@ -39,7 +39,7 @@ export default class ConnectionPage extends React.Component {
             protocol: this.state.protocol,
             host: this.state.host,
             port: this.state.port,
-            basePath: this.basePath
+            basePath: this.state.basePath
         });
         await this.fetchConnections();
     }
@@ -77,8 +77,8 @@ export default class ConnectionPage extends React.Component {
     }
     
     goToLogin() {
-        API.updateConnection( new Connection( this.state.protocol, this.state.host, this.state.port ) );
-        Actions.popAndPush( 'login' );
+        API.updateConnection( new Connection( this.state.protocol, this.state.host, this.state.port, this.state.basePath ) );
+        Actions.popAndPush( 'login' ); 
     }
 
     render() {

@@ -10,7 +10,7 @@ import moment from 'moment'
 import 'moment/locale/es'
 
 //Interval to refresh the user's session
-const AUTO_REFRESH_INTERVAL = 1000 * 60 * 30; //Each 30 minutes
+const AUTO_REFRESH_INTERVAL = 1000 * 60 * 5; //Each 5 minutes
 export default class ScanPage extends React.Component {
     constructor( props ) {
         super( props )

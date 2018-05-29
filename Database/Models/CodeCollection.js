@@ -4,6 +4,7 @@ import CodeRoutes from './Code/Routes';
 
 import API from '../../Communication/API/API';
 import EventWebSocket from '../../Communication/EventBased/EventWebSocket'
+import moment from 'moment'
 
 export default class CodeCollection {
     constructor( session, type, onCodeAdded ) {
@@ -12,7 +13,7 @@ export default class CodeCollection {
         this.onCodeAdded = onCodeAdded;
         this.filename = session.id + '_' + type.id + '_' + API.me.username;
         this.db = new DB( this.filename, false, true ); 
-        
+
         this.socket = new EventWebSocket(
             API.connection,
             session.id + '-session'
@@ -48,18 +49,28 @@ export default class CodeCollection {
             return;
         }
 
+        let i;
         let totalValidated = 0;
         const codes = await codesResponse.json();
-        for( let i = 0; i < codes.length; i++ ) {
-            const code = codes[ i ];
+        const dbCodes = await this.getCodes({});
+        const codeDict = {};
+        for( i = 0; i < dbCodes.length; i++ ) {
+            const dbCode = dbCodes[i];
+            codeDict[ dbCode.code ] = dbCode;
+        }
 
-            const codeDB = await this.findCode( code.code );
-            if( codeDB !== null ) {
-                if( code.updated_at > codeDB.updated_at ) {
+        toInsert = [];
+        toUpdate = [];
+        for( i = 0; i < codes.length; i++ ) {
+            const code = codes[ i ];
+            const codeDB = codeDict[ code.code ];
+            if( codeDB ) {
+                const currentUpdated = moment( code.updated_at );
+                const dbUpdated = moment(codeDB.updated_at);
+                if( currentUpdated.isAfter( dbUpdated ) ) {
                     if( code.validations ) {
                         totalValidated++;
                     }
-
                     await this.updateCode( new Code(code) );
                 } else {
                     if( codeDB.validations ) {
@@ -70,9 +81,11 @@ export default class CodeCollection {
                 if( code.validations ) {
                     totalValidated++;
                 }
-
-                await this.addCode( code );                
-            }
+                toInsert.push( code );                
+            }            
+        }
+        if( toInsert.length > 0 ) {
+            this.addCodes( toInsert );
         }
         this.validated = totalValidated;
         this.lastUpdate = new Date();
@@ -84,6 +97,10 @@ export default class CodeCollection {
 
     async getTypes() {
         return await this.typesDB.find();
+    }
+
+    addCodes( codes ) {
+        return this.db.insert( codes );
     }
 
     addCode( code ) {
