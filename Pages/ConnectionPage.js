@@ -116,7 +116,7 @@ export default class ConnectionPage extends React.Component {
                     <Text style={{color: '#333', textAlign: 'center'}}>PUERTO</Text>
                     <TextInput style={{textAlign: 'center'}} keyboardType="numeric" onChangeText={(text) => this.handleFieldChange('port', text)} value={this.state.port}/>
                     <Text style={{color: '#333', textAlign: 'center'}}>PREFIJO</Text>
-                    <TextInput style={{textAlign: 'center'}} onChangeText={(text) => this.handleFieldChange('basePath', text)} value={this.state.username} />
+                    <TextInput style={{textAlign: 'center'}} onChangeText={(text) => this.handleFieldChange('basePath', text)} value={this.state.basePath} />
                 </View>
                 <Button
                     disabled={this.state.name.trim().length === 0}

@@ -11,8 +11,8 @@ export default class LoginPage extends React.Component {
         super( props )
 
         this.state = {
-            username: 'cdem',
-            password: 'cdem',
+            username: '',
+            password: '',
             connectDisabled: false,
             logged: false
         }
