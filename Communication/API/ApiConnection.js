@@ -33,7 +33,7 @@ export default class ApiConnection {
         return formBody.join('&');
     }
 
-    async attemptLogin( data ) {     
+    async attemptLogin( data ) {   
         const response = await this.post( this.loginPath, data, true );
         if( !response.ok ) {
             throw new Error( 'LOGIN FAILED' );  
@@ -75,7 +75,7 @@ export default class ApiConnection {
             this.me = await meResponse.json();
         }
     }
-
+    
     async get( path ) {
         const url = this.connection.getFullURL( path );
         const request = new Request( url, { method: 'GET', headers: { Authorization: this.getAuthHeader() } });
@@ -91,7 +91,6 @@ export default class ApiConnection {
                 data = JSON.stringify( data );  
             }
         }
-
         const url = this.connection.getFullURL( path );
         const request = new Request( url, { 
             method: 'POST', 

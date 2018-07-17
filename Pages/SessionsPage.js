@@ -51,6 +51,7 @@ export default class SessionsPage extends React.Component {
                     renderItem={
                         ( item ) => {
                             const session = item.item;
+                            const recint = session.recint === Object( session.recint )?session.recint.recint:session.recint
                             return(
                                 <View style={styles.container}>
                                     <Text style={styles.nameText}>
@@ -58,7 +59,7 @@ export default class SessionsPage extends React.Component {
                                     </Text>                                
                                     <Text style={styles.otherText}>{moment(session.date).locale('es').format('dddd DD MMMM YYYY HH:mm').toUpperCase()}</Text>
                                     <Text style={styles.otherText}> {session.location} </Text>
-                                    <Text style={styles.otherText}> {session.recint} </Text>
+                                    <Text style={styles.otherText}> {recint} </Text>
                                     <Button 
                                         color="#999"
                                         onPress={() => this.startSession( session )}

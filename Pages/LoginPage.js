@@ -36,8 +36,7 @@ export default class LoginPage extends React.Component {
                 grant_type: config.auth.grant_type
             });
             
-            this.goToSessions()
-            
+            this.goToSessions()   
         } catch( error ) {
             Alert.alert(
                 'ERROR DE CONEXIÓN',

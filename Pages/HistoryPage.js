@@ -132,6 +132,7 @@ export default class HistoryPage extends React.Component {
  
     render() {
         const { session } = this.props
+        const recint = session.recint === Object( session.recint )?session.recint.recint:session.recint
         const filteredEntries = this.filterEntries( this.state.entries )
         return(
             <ScrollView>
@@ -139,7 +140,7 @@ export default class HistoryPage extends React.Component {
                     <View style={{backgroundColor:'#ddd', borderBottomWidth: 0.5, borderBottomColor:'#ccc'}}>
                         <Text style={{color:'#555', fontSize: 15, textAlign: 'center'}}>{session.name}</Text>
                         <Text style={{color:'#999', fontSize: 5, textAlign: 'center'}}>{session.location}</Text>
-                        <Text style={{color:'#999', fontSize: 5, textAlign: 'center'}}>{session.recint}</Text>
+                        <Text style={{color:'#999', fontSize: 5, textAlign: 'center'}}>{recint}</Text>
                         <Text style={{color:'#999', fontSize: 5, textAlign: 'center'}}>{moment(session.date).locale('es').format( 'dddd DD MMMM YYYY HH:mm' )}</Text>
                     </View> 
                 </View>

@@ -1,6 +1,5 @@
 import TaskOneShot from '../../Tasks/TaskOneShot';
 import Code from '../../Database/Models/Code/Code';
-import { RotationGestureHandler } from 'react-native-gesture-handler';
 
 export default class EmitCodeSearchTask extends TaskOneShot {
     constructor( allowedCollections, votation, onFinish ) {
