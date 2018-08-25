@@ -9,13 +9,10 @@ import API from '../Communication/API/API'
 import moment from 'moment'
 import 'moment/locale/es'
 
-//Interval to refresh the user's session
-const AUTO_REFRESH_INTERVAL = 1000 * 60 * 5; //Each 5 minutes
 export default class ScanPage extends React.Component {
     constructor( props ) {
         super( props )
-
-        this.autoRefresherId = null
+        
         this.state = {
             fordibben: false,
             controller: null,
@@ -45,8 +42,6 @@ export default class ScanPage extends React.Component {
             await controller.initialize( session, types );
 
             this.setState({ controller, scanned: controller.validated, totalCodes: controller.codeCount });
-
-            this.autoRefresherId = setTimeout( async () => await this.refreshSession(), AUTO_REFRESH_INTERVAL )
         }
     }
 
@@ -62,19 +57,6 @@ export default class ScanPage extends React.Component {
             lastScanData: null,
             openCamera: false
         };
-    }
-    
-    async refreshSession() {
-        try {
-            await API.attemptRefresh()
-            this.autoRefresherId = setTimeout( 
-                async () => await this.refreshSession(), 
-                AUTO_REFRESH_INTERVAL 
-            )
-        } catch( error ) {
-            console.error( 'fatal error: bad refresh token while scanning' )
-            Actions.replace('/login')
-        }
     }
 
     updateConnectionStatus( value ) {
